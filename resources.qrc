@@ -1,0 +1,24 @@
+<RCC>
+    <qresource prefix="/">
+        <file>piecesets/default/bk.png</file>
+        <file>piecesets/default/bb.png</file>
+        <file>piecesets/default/bn.png</file>
+        <file>piecesets/default/bp.png</file>
+        <file>piecesets/default/bq.png</file>
+        <file>piecesets/default/br.png</file>
+        <file>piecesets/default/wk.png</file>
+        <file>piecesets/default/wb.png</file>
+        <file>piecesets/default/wn.png</file>
+        <file>piecesets/default/wp.png</file>
+        <file>piecesets/default/wq.png</file>
+        <file>piecesets/default/wr.png</file>
+        <file>icons/flag.svg</file>
+        <file>icons/twitter.svg</file>
+        <file>sound/move_009.wav</file>
+        <file>sound/gameover.mp3</file>
+        <file>sound/specialmove.mp3</file>
+        <file>icons/alert-triangle.svg</file>
+        <file>sound/chatreceived.mp3</file>
+        <file>sound/chatsent.mp3</file>
+    </qresource>
+</RCC>
