@@ -23,9 +23,27 @@ namespace PawnConstants {
     bool isH2HPlay = false;
     bool showBoardMarkings = true;
     bool startDialogClocksEnabled = false;
+
+    //const QSize startingSize = QSize(860, 860);
+#ifdef FLATPAK_BUILD
+    const QSize startingSize = QSize(910, 860);
+#else
     const QSize startingSize = QSize(860, 860);
+#endif
+    //const QSize oneDockOpen = QSize(1000, 860);
+#ifdef FLATPAK_BUILD
+    const QSize oneDockOpen = QSize(1050, 860);
+#else
     const QSize oneDockOpen = QSize(1000, 860);
+#endif
+    //const QSize bothDocksOpen = QSize(1300, 860);
+
+#ifdef FLATPAK_BUILD
+    const QSize bothDocksOpen = QSize(1350, 860);
+#else
     const QSize bothDocksOpen = QSize(1300, 860);
+#endif
+
     bool isEngineLoggingEnabled = false;
     const QString saveHistoryDirPath = APPDIR + "/saved_histories";
     const QString savePGNDirPath = APPDIR + "/saved_PGN";

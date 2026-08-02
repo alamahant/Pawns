@@ -129,6 +129,7 @@ MainWindow::MainWindow(QWidget *parent)
         }
         remoteDock->setVisible(visible);
         isremotedockvisible = visible;
+        viewRemoteDockAct->setChecked(visible);
 
     });
 
@@ -144,6 +145,7 @@ MainWindow::MainWindow(QWidget *parent)
         }
         gameInfoDock->setVisible(visible);
         isleftdockvisible = visible;
+        viewLeftDockAct->setChecked(visible);
     });
 
 
