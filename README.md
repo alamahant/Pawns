@@ -147,4 +147,3 @@ Report bugs: [GitHub Issues](https://github.com/alamahant/Pawns/issues)
 ---
 Copyright © 2026 Alamahant. All rights reserved.
 
-*Built with ❤️ and ♟️*
