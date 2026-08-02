@@ -222,7 +222,7 @@ if(FLATPAK_BUILD)
             RENAME "io.github.alamahant.Pawns.png")
 
         install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/piecesets"
-                DESTINATION "share/piecesets")
+                        DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 
 if(QT_VERSION_MAJOR EQUAL 6)
