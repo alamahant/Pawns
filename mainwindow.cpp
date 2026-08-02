@@ -2218,6 +2218,7 @@ void MainWindow::onPieceSetChanged(const QString &setName)
 {
     if (setName.isEmpty()) return;
 
+    /*
     if (setName == "default") {
         PawnConstants::useDefaultPieces = true;
         PawnConstants::pieceSetDirectory = "";
@@ -2225,6 +2226,28 @@ void MainWindow::onPieceSetChanged(const QString &setName)
         PawnConstants::useDefaultPieces = false;
         PawnConstants::pieceSetDirectory = "piecesets/" + setName + "/";
     }
+    */
+
+
+#ifdef FLATPAK_BUILD
+    QDir piecesDir(QCoreApplication::applicationDirPath() + "/piecesets");
+    if (setName == "default") {
+        PawnConstants::useDefaultPieces = true;
+        PawnConstants::pieceSetDirectory = "";
+    } else {
+        PawnConstants::useDefaultPieces = false;
+        PawnConstants::pieceSetDirectory = piecesDir.path() + "/" + setName + "/";
+    }
+#else
+    if (setName == "default") {
+        PawnConstants::useDefaultPieces = true;
+        PawnConstants::pieceSetDirectory = "";
+    } else {
+        PawnConstants::useDefaultPieces = false;
+        PawnConstants::pieceSetDirectory = "piecesets/" + setName + "/";
+    }
+#endif
+
 
     if (board) {
         board->reloadAllPieces();
