@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
     , upnpDialog(new UPnPManagerDialog(this))
     , m_soundPlayer(new QMediaPlayer(this))
     , m_audioOutput(new QAudioOutput(this))
-    , replayDialog(new ReplayDialog(this))
+    //, replayDialog(new ReplayDialog(this))
 {
     ui->setupUi(this);
     setWindowIcon(QIcon(":/io.github.alamahant.Pawns.png"));
@@ -45,6 +45,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     int savedSize = settings.value("squareSize", 65).toInt();
     PawnConstants::SQUARE_SIZE = savedSize;
+
+    replayDialog = new ReplayDialog(this);
 
     PawnConstants::showBoardMarkings = settings.value("showboardmarkings", true).toBool();
 
