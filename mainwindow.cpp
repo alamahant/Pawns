@@ -22,7 +22,8 @@
 #include<QApplication>
 #include<QClipboard>
 #include<QDesktopServices>
-
+#include"helpmenudialog.h"
+#include"donationdialog.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -549,6 +550,28 @@ void MainWindow::createMenus() {
 
     QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
 
+    QAction *aboutAction = helpMenu->addAction("About Pawns");
+        connect(aboutAction, &QAction::triggered, [this]() {
+            HelpMenuDialog dialog(HelpType::About, this);
+            dialog.exec();
+        });
+
+        QAction *featuresAction = helpMenu->addAction("Features");
+        connect(featuresAction, &QAction::triggered, [this]() {
+            HelpMenuDialog dialog(HelpType::Features, this);
+            dialog.exec();
+        });
+
+        QAction *instructionsAction = helpMenu->addAction("Instructions");
+        connect(instructionsAction, &QAction::triggered, [this]() {
+            HelpMenuDialog dialog(HelpType::Instructions, this);
+            dialog.exec();
+        });
+        QAction *supportusAction = helpMenu->addAction("Support Us");
+            connect(supportusAction, &QAction::triggered, [this]() {
+                DonationDialog dialog(this);
+                dialog.exec();
+            });
 
     QWidget* cornerWidget = new QWidget(this);
     QHBoxLayout* cornerLayout = new QHBoxLayout(cornerWidget);

@@ -1,0 +1,2298 @@
+#include"helpmenudialog.h"
+#include <QApplication>
+#include<QString>
+HelpMenuDialog::HelpMenuDialog(HelpType type, QWidget *parent)
+    : QDialog(parent)
+{
+    setWindowTitle(getTitle(type));
+    setModal(true);
+    resize(600, 500);
+
+    setupUI();
+    loadContent(type);
+}
+
+void HelpMenuDialog::setupUI()
+{
+    m_layout = new QVBoxLayout(this);
+
+    m_contentArea = new QTextEdit(this);
+    m_contentArea->setReadOnly(true);
+   m_contentArea->setAcceptRichText(true);
+
+
+    m_closeButton = new QPushButton("Close", this);
+    connect(m_closeButton, &QPushButton::clicked, this, &QDialog::accept);
+
+    m_layout->addWidget(m_contentArea);
+    m_layout->addWidget(m_closeButton);
+}
+
+void HelpMenuDialog::loadContent(HelpType type)
+{
+    QString content;
+
+    switch (type) {
+    case HelpType::About:
+        content = getAboutContent();
+        break;
+    case HelpType::Features:
+        content = getFeaturesContent();
+        break;
+    case HelpType::Instructions:
+        content = getInstructionsContent();
+        break;
+    case HelpType::BestPractices:
+        content = getBestPracticesContent();
+        break;
+    case HelpType::WhatsNew:
+        content = getWhatsNewContent();
+        break;
+    case HelpType::Shortcuts:
+        content = getShortcutsContent();
+        break;
+    case HelpType::Security:
+        content = getSecurityContent();
+        break;
+    case HelpType::TwoFA:
+        content = getTwoFAContent();
+        break;
+    case HelpType::DataManagement:
+        content = getDataManagementContent();
+        break;
+    case HelpType::DownloadManagement:
+        content = getDownloadManagerContent();
+        break;
+    case HelpType::onSitesAndSessions:
+        content = getSitesSessionsContent();
+        break;
+    case HelpType::onSecurity:
+        content = getOnSecurityContent();
+        break;
+    case HelpType::onNewStorageSystem:
+        content = getOnNewStorageSystemContent();
+        break;
+    case HelpType::onNamedProfiles:
+        content = getOnNamedProfilesContent();
+        break;
+    case HelpType::onChangelog:
+        content = getChangelogContent();
+        break;
+    case HelpType::Radionics:
+        content = getRadionicsTheoryContent();
+        break;
+    case HelpType::supportUs:
+        content = getSupportusContent();
+        break;
+    }
+
+
+    m_contentArea->setHtml(content);
+}
+
+QString HelpMenuDialog::getTitle(HelpType type)
+{
+    switch (type) {
+    case HelpType::About: return "About BinauralPlayer";
+    case HelpType::Features: return "Features";
+    case HelpType::Instructions: return "Instructions";
+    case HelpType::BestPractices: return "Best Practices";
+    case HelpType::WhatsNew: return "What's New";
+    case HelpType::Shortcuts: return "Keyboard Shortcuts";
+    case HelpType::Security: return "Jasmine Security";
+    case HelpType::TwoFA: return "Jasmine 2FA Utility";
+    case HelpType::DataManagement: return "Jasmine Data Management";
+    case HelpType::DownloadManagement: return "Jasmine Download Management";
+    case HelpType::onSitesAndSessions: return "On Sites And Sessions";
+    case HelpType::onSecurity: return "On Security";
+    case HelpType::onNewStorageSystem: return "On the New Storage System";
+    case HelpType::onNamedProfiles: return "On Shared Named Profiles";
+    case HelpType::onChangelog: return "Changelog";
+
+    case HelpType::supportUs: return "Support Us";
+    case HelpType::Radionics: return "On The Radionics Console";
+
+    default: return "Help";
+    }
+}
+
+QString HelpMenuDialog::getBestPracticesContent()
+{
+    return R"(
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #2c3e50;">
+
+            <h1 style="color: #8e44ad; text-align: center; margin-bottom: 20px;">
+                Best Practices for Binaural & Isochronic Audio
+            </h1>
+
+            <p>
+                Brainwave entrainment is the practice of using rhythmic audio—such as binaural beats
+                or isochronic tones—to gently guide the brain into specific states of relaxation,
+                focus, meditation, or sleep. While extremely helpful when used correctly, it's important
+                to understand how it works and how to use it safely.
+            </p>
+
+            <h2 style="color: #3498db;">What Are Binaural Beats?</h2>
+            <p>
+                Binaural beats occur when you play slightly different frequencies in each ear.
+                The brain detects the difference between the tones and begins synchronizing with
+                the resulting "beat frequency." This effect requires <strong>headphones</strong>.
+            </p>
+
+            <h2 style="color: #3498db;">What Are Isochronic Tones?</h2>
+            <p>
+                Isochronic tones are single, sharply-pulsed tones that turn on and off at a steady rhythm.
+                They do *not* require headphones and are considered one of the strongest forms of
+                brainwave entrainment.
+            </p>
+
+            <h2 style="color: #27ae60;">Potential Benefits</h2>
+            <ul style="padding-left: 20px;">
+                <li>Deep relaxation and meditation assistance</li>
+                <li>Improved focus and concentration</li>
+                <li>Increased creativity and problem-solving</li>
+                <li>Enhanced sleep and dream clarity</li>
+                <li>Stress and anxiety reduction</li>
+                <li>Mood balancing and emotional grounding</li>
+            </ul>
+
+            <h2 style="color: #c0392b;">Safety & Dangers</h2>
+            <ul style="padding-left: 20px;">
+                <li>Do <strong>not</strong> use while driving or operating machinery</li>
+                <li>Avoid high-intensity frequencies if you are prone to seizures or epilepsy</li>
+                <li>Start with short sessions (10–15 minutes) before longer ones</li>
+                <li>If you feel dizziness or discomfort, stop immediately</li>
+                <li>Use comfortable volume levels—entrainment does not require loud audio</li>
+                <li>Never force meditation states; let the brain shift naturally</li>
+            </ul>
+
+            <h2 style="color: #2980b9;">Useful Frequency Lists</h2>
+            <p>
+                A large list of brainwave-related frequencies can be found here:
+            </p>
+            <ul style="padding-left: 20px;">
+                <li><a href="https://www.lunarsight.com/freq.htm">https://www.lunarsight.com/freq.htm</a></li>
+                <li><a href="https://docs.preterhuman.net/Brainwave/Cymatic_Frequency_Listing">https://docs.preterhuman.net/Brainwave/Cymatic_Frequency_Listing</a></li>
+            </ul>
+
+            <h2 style="color: #16a085;">Background Ambience</h2>
+            <p>
+                Atmospheric nature sounds greatly enhance the experience. High-quality,
+                royalty-free ambient audio can be found at:
+            </p>
+            <p>
+                <a href="https://pixabay.com/sound-effects/search/nature/">https://pixabay.com/sound-effects/search/nature/</a>
+            </p>
+
+            <h2 style="color: #8e44ad;">Best Practices</h2>
+            <ul style="padding-left: 20px;">
+                <li>Use good headphones for binaural beats</li>
+                <li>Use speakers or headphones for isochronic tones</li>
+                <li>Meditate or sit comfortably during sessions</li>
+                <li>Combine tones with relaxing ambience or maybe some relaxxing music for deeper immersion</li>
+                <li>Choose frequencies appropriate for your goal (sleep, focus, creativity, etc.)</li>
+                <li>Consistency matters—small daily sessions are better than long sporadic ones</li>
+            </ul>
+
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 25px; text-align: center;">
+                <strong>
+                    Brainwave entrainment is a powerful tool—use it mindfully, with intention,
+                    and always listen to your body.
+                </strong>
+            </div>
+
+        </div>
+    )";
+}
+
+
+
+QString HelpMenuDialog::getRadionicsTheoryContent()
+{
+    return R"(
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #2c3e50;">
+
+            <h1 style="color: #8e44ad; text-align: center; margin-bottom: 20px;">
+                Radionics Console: Theory & Implementation
+            </h1>
+
+            <h2 style="color: #3498db;">What is Radionics?</h2>
+            <p>
+                Radionics is a speculative practice that originated in the early 20th century, primarily developed by American physician Dr. Albert Abrams (1864–1924). The core concept suggests that <strong>all existents</strong>—not just living beings, but all matter, objects, and even abstract concepts—possess unique vibratory frequencies or "energy signatures."
+            </p>
+            <p>
+                This idea draws from <strong>Platonic ontology</strong>, the ancient Greek philosophical concept that all things have an ideal "form" or essence that exists beyond the physical world. According to this view, every person, object, thought, and intention has a corresponding vibrational frequency that can be accessed, influenced, and aligned with.
+            </p>
+            <p>
+                By tuning into the frequency of a desired outcome—a <strong>"trend"</strong>—practitioners believe they can bring that outcome into physical manifestation. The radionic device acts as a bridge between the ideal (the intention) and the real (the manifestation).
+            </p>
+
+            <h2 style="color: #3498db;">Key Concepts</h2>
+            <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                <tr style="background: #ecf0f1;">
+                    <th style="padding: 8px; border: 1px solid #bdc3c7; text-align: left;">Concept</th>
+                    <th style="padding: 8px; border: 1px solid #bdc3c7; text-align: left;">Description</th>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;"><strong>The Witness</strong></td>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">A physical or symbolic representation of the target (e.g., a name, photo, hair sample, or written intention).</td>
+                </tr>
+                <tr style="background: #f9f9f9;">
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;"><strong>The Rate</strong></td>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">A unique combination of dial settings (numbers) that corresponds to a specific condition, intention, or outcome.</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;"><strong>The Broadcast</strong></td>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">The transmission of the intention, often through sound, light, or electromagnetic fields.</td>
+                </tr>
+                <tr style="background: #f9f9f9;">
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;"><strong>The Structural Link</strong></td>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">The energetic connection between the operator, the device, and the target—a "bridge" between intention and manifestation.</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;"><strong>The Trend</strong></td>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">The desired outcome or condition you wish to manifest.</td>
+                </tr>
+            </table>
+
+            <h2 style="color: #3498db;">Manifestation and the Law of Attraction</h2>
+            <p>
+                Radionics operates on principles similar to the <strong>Law of Attraction</strong>—the idea that focused intention, combined with emotional alignment, attracts corresponding experiences into one's life. However, radionics adds a technological dimension to this process:
+            </p>
+            <ul style="padding-left: 20px;">
+                <li><strong>Intention becomes frequency:</strong> Instead of merely thinking about a desired outcome, radionics encodes that intention into a specific, measurable frequency.</li>
+                <li><strong>The frequency becomes the carrier:</strong> The audio tone carries the intention like a radio wave carries a signal.</li>
+                <li><strong>Manifestation occurs through resonance:</strong> By continuously broadcasting the intention's frequency, the practitioner is believed to "tune" themselves and their environment to that outcome.</li>
+            </ul>
+            <p>
+                This aligns with the Hermetic principle of correspondence: <em>"As above, so below; as within, so without."</em> The frequency represents the internal state; the external world supposedly adjusts to match it.
+            </p>
+
+            <h2 style="color: #3498db;">Radionics vs. Law of Attraction</h2>
+            <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                <tr style="background: #ecf0f1;">
+                    <th style="padding: 8px; border: 1px solid #bdc3c7; text-align: left;">Law of Attraction</th>
+                    <th style="padding: 8px; border: 1px solid #bdc3c7; text-align: left;">Radionics</th>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">Mental focus and visualization</td>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">Frequency encoding and broadcast</td>
+                </tr>
+                <tr style="background: #f9f9f9;">
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">Emotional alignment</td>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">Mechanical/physical tuning</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">Passive manifestation</td>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">Active transmission</td>
+                </tr>
+                <tr style="background: #f9f9f9;">
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">Relies on consistent mental repetition</td>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">Automatically broadcasts intention without sustained effort</td>
+                </tr>
+            </table>
+
+            <h2 style="color: #3498db;">Spooky Action at a Distance</h2>
+            <p>
+                In physics, quantum entanglement—often called <strong>"spooky action at a distance"</strong> by Albert Einstein—describes how two particles can remain connected across vast distances, instantaneously affecting each other's states.
+            </p>
+            <p>
+                Radionics operates on a similar principle: the structural link is believed to connect the operator, the device, and the target (who may be anywhere in the world) through a non-local, non-physical connection. By broadcasting the intention frequency, the practitioner can influence the target across time and space, regardless of physical proximity.
+            </p>
+            <p>
+                This is why radionic sessions can be performed "remotely" with only a witness (e.g., a photo or name) serving as the connection to the target.
+            </p>
+
+            <h2 style="color: #3498db;">The Concept of "Always On"</h2>
+            <p>
+                One of the key advantages of radionics over pure mental manifestation is that <strong>the device keeps working even after you stop</strong>.
+            </p>
+            <p>
+                When you play a radionic tone, the frequency continues to broadcast—even if you walk away, sleep, or forget about it. The device becomes an autonomous intention broadcaster, constantly "reminding" the universe (and your subconscious) of your desired outcome.
+            </p>
+            <p>
+                This is analogous to planting a seed in the soil: you water it once, but the seed continues to grow on its own, drawing nutrients from the earth. Similarly, the radionic tone serves as a "seed frequency" that continues to resonate and attract the intended outcome, even without your active participation.
+            </p>
+
+            <h2 style="color: #3498db;">Advanced Practices and Hardware Integration</h2>
+            <p>
+                Experienced radionics practitioners often combine digital radionics with physical devices to amplify and enhance the transmission:
+            </p>
+            <ul style="padding-left: 20px;">
+                <li><strong>1. Orgonite:</strong> A resin-based material containing metal shavings and crystals. It is believed to convert negative energy into positive, life-affirming energy. Placing orgonite near the audio output is thought to "charge" the intention and purify the broadcast.</li>
+                <li><strong>2. Orgone Generators:</strong> Devices that generate orgone energy, believed to enhance the effectiveness of radionic broadcasts. Some practitioners place radionic devices on top of orgone generators to amplify the intention frequency.</li>
+                <li><strong>3. Moebius Coils:</strong> A special type of electrical coil that creates a unique electromagnetic field. Connecting the radionic tone to a Moebius coil wrapped around crystals is believed to embed the intention into the physical environment.</li>
+                <li><strong>4. Crystals:</strong> Quartz crystals are often used as "programmable" receivers and transmitters of intention. By wrapping a Moebius coil around a crystal and running the radionic tone through it, the crystal is believed to "store" and continuously broadcast the intention.</li>
+                <li><strong>5. Amplifiers and Speakers:</strong> Connecting your computer's audio output to an amplifier and speakers (or even ultrasonic transducers) allows the intention frequency to fill the physical space, saturating the environment with the desired vibration.</li>
+            </ul>
+
+            <h2 style="color: #3498db;">Full Broadcast Chain</h2>
+<pre style="background-color: #2c3e50; color: #ecf0f1; padding: 15px; border-radius: 8px; font-family: 'Courier New', Courier, monospace; line-height: 1.8; white-space: pre; overflow-x: auto; border: 1px solid #444;">
+User Sets Intention
+    ↓
+Radionics Console Generates Frequency Signature
+    ↓
+┌──────────────────────────────────────────────┐
+│                 OUTPUT OPTIONS               │
+├────────────────┬───────────────┬─────────────┤
+│  Headphones    │   Speakers    │  Amplifier  │
+│  (Active       │   (Room       │  → Moebius  │
+│   Listening)   │   Broadcast)  │    Coils    │
+│                │               │  → Crystals │
+│                │               │  → Orgonite │
+└────────────────┴───────────────┴─────────────┘
+    ↓
+Continuous Broadcast (Even After You Stop)
+    ↓
+Intention Manifests Through Resonance and Attraction
+            </pre>
+
+            <h2 style="color: #c0392b;">Scientific Status</h2>
+            <div style="background: #f8f9fa; border-left: 4px solid #c0392b; padding: 15px; border-radius: 4px; margin: 10px 0;">
+                <p style="margin: 0; color: #333;">
+                    <strong>Important Disclaimer</strong><br><br>
+                    Radionics, like the Law of Attraction and orgone theory, is <strong>not supported by mainstream science</strong>. Rigorous studies have consistently failed to demonstrate its efficacy beyond placebo effects.
+                    <br><br>
+                    This console is provided for <strong>entertainment and exploration purposes only</strong>. It is not a medical device and is not intended to diagnose, treat, cure, or prevent any disease.
+                    <br><br>
+                    Use it with curiosity, not expectation. If you notice any benefit, that's wonderful—but no claims are made or implied.
+                </p>
+            </div>
+
+            <h2 style="color: #3498db;">Our Implementation</h2>
+            <p>
+                The Radionics Console in BinauralPlayer is a modern, digital interpretation of these traditional concepts.
+            </p>
+            <ul style="padding-left: 20px;">
+                <li><strong>1. Intention Setting:</strong> TARGET (who or what this session is for) and TREND (what you wish to achieve).</li>
+                <li><strong>2. The "Rates" (Dials):</strong> Three interactive dials generate random numbers (0–9999) when clicked and held. The combination creates a unique "seed" value.</li>
+                <li><strong>3. Frequency Encoding:</strong> The combined seed is mapped to a frequency offset (0–5 Hz), applied to a base frequency (20–1000 Hz) to generate left and right audio channels.</li>
+                <li><strong>4. The Structural Link:</strong> When all three dials are locked, a unique frequency signature representing your intention is emitted as audio.</li>
+                <li><strong>5. Continuous Broadcast:</strong> Once playing, the tone continues to broadcast your intention—even if you walk away.</li>
+                <li><strong>6. Session Management:</strong> Save and load sessions, preserving all settings for later use.</li>
+            </ul>
+
+            <h2 style="color: #3498db;">How to Use the Console</h2>
+            <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                <tr style="background: #ecf0f1;">
+                    <th style="padding: 8px; border: 1px solid #bdc3c7; text-align: left;">Step</th>
+                    <th style="padding: 8px; border: 1px solid #bdc3c7; text-align: left;">Action</th>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">1</td>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">Set your <strong>TARGET</strong> and <strong>TREND</strong> (text or images)</td>
+                </tr>
+                <tr style="background: #f9f9f9;">
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">2</td>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">While focusing on the desired outcome click and hold each <strong>DIAL</strong> to spin, release to lock</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">3</td>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">Adjust <strong>BASE FREQUENCY</strong> (20–1000 Hz)</td>
+                </tr>
+                <tr style="background: #f9f9f9;">
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">4</td>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">Set <strong>DURATION</strong> (1–360 minutes)</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">5</td>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">Click <strong>PLAY</strong> to broadcast your intention</td>
+                </tr>
+                <tr style="background: #f9f9f9;">
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">6</td>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;"><strong>Walk away</strong> — let the frequency do the work</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">7</td>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">Click <strong>STOP</strong> to end the session</td>
+                </tr>
+                <tr style="background: #f9f9f9;">
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">8</td>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">Use <strong>SAVE/LOAD</strong> to manage sessions</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">9</td>
+                    <td style="padding: 8px; border: 1px solid #bdc3c7;">Use <strong>RESET</strong> to clear all settings</td>
+                </tr>
+            </table>
+
+<h2 style="color: #3498db;">Advanced Exploration (DIY Hardware)</h2>
+<p>
+    Some advanced practitioners choose to experiment with physical hardware to complement their digital sessions.
+    This is entirely optional and not required for the console to function.
+</p>
+<div style="background-color: #f8f9fa; border-left: 4px solid #f39c12; padding: 15px; border-radius: 4px; margin: 10px 0;">
+    <p style="margin: 0; color: #333;">
+        <strong>Caution</strong><br><br>
+        Working with electronics, amplifiers, and coils carries inherent risks including electrical shock,
+        equipment damage, and fire hazards. Only attempt this if you have the necessary knowledge and experience.
+        <br><br>
+        The developers of BinauralPlayer assume no responsibility for any damage, injury, or loss
+        resulting from DIY hardware experiments.
+    </p>
+</div>
+<p>
+    If you choose to explore this path:
+</p>
+<ul style="padding-left: 20px;">
+    <li>Connect your computer's audio output to an amplifier</li>
+    <li>Connect the amplifier's speaker jacks to a Moebius coil</li>
+    <li>Wrap the coil around crystals or place it near orgonite</li>
+    <li>Play the radionic tone</li>
+    <li>Walk away — the intention is now broadcasting into the physical environment</li>
+</ul>
+<p>
+    This creates a complete broadcast chain from digital intention to physical transmission.
+</p>
+
+
+            <h2 style="color: #3498db;">Philosophical Notes</h2>
+            <blockquote style="border-left: 4px solid #8e44ad; padding-left: 15px; margin: 10px 0; color: #555; font-style: italic;">
+                "The frequency is the signature. The intention is the content. The hardware is just the messenger."
+                <br><br>
+                "Set it, play it, walk away. Trust the process."
+            </blockquote>
+
+            <h2 style="color: #3498db;">The Universe as Vibrational</h2>
+            <p>
+                The underlying philosophy of radionics is that <strong>the universe is vibrational at its core</strong>. Matter is energy. Energy is frequency. Frequency is information. And information can be shaped by intention.
+            </p>
+            <p>
+                By generating a specific frequency with a specific intention, you are, in effect, shaping the informational field of reality itself—"tuning" it to your desired outcome.
+            </p>
+            <p>
+                This is akin to tuning a radio: you don't create the music, you simply select the station. Similarly, radionics doesn't "create" the outcome—it aligns you with the frequency of the outcome you wish to manifest.
+            </p>
+            <blockquote style="border-left: 4px solid #8e44ad; padding-left: 15px; margin: 10px 0; color: #555; font-style: italic;">
+                "You are not creating something new. You are tuning into what already exists in the field of possibilities."
+            </blockquote>
+
+            <h2 style="color: #3498db;">Further Reading</h2>
+            <ul style="padding-left: 20px;">
+                <li>Abrams, A. (1910). <em>Spondylotherapy</em></li>
+                <li>De La Warr, G. (1960). <em>The De La Warr Radionic Instrument</em></li>
+                <li>Reich, W. (1940). <em>The Function of the Orgasm</em> (orgone theory)</li>
+                <li>Plato. <em>The Republic</em> (Theory of Forms)</li>
+                <li>Public domain research on radionics, orgonite, and intention-based technologies</li>
+            </ul>
+
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 25px; text-align: center;">
+                <strong>
+                    The frequency is the signature. The intention is the content.
+                    <br>
+                    Set it, play it, walk away. Trust the process.
+                </strong>
+            </div>
+
+        </div>
+    )";
+}
+
+
+
+QString HelpMenuDialog::getWhatsNewContent()
+{
+    return R"(
+
+<div style="background-color: #e8f5e9; padding: 15px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #2e7d32;">
+    <h2 style="color: #1b5e20; margin-top: 0;">Background Noise Layer — Version 1.6.3 <span style="font-size: 0.75em; background-color: #2e7d32; color: white; padding: 2px 8px; border-radius: 12px; vertical-align: middle;">NEW</span></h2>
+    <p>Version 1.6.3 adds a real-time background noise layer that blends seamlessly with your binaural and isochronic tones.</p>
+
+    <div style="background-color: #e8f5e9; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #2e7d32;">
+        <h3 style="color: #1b5e20; margin-top: 0;">Four Noise Colors</h3>
+        <ul>
+            <li><strong>White</strong> — classic hiss, like TV static</li>
+            <li><strong>Pink</strong> — smooth waterfall, steady rain</li>
+            <li><strong>Brown</strong> — deep rumbling thunder</li>
+            <li><strong>Grey</strong> — balanced, perceptually flat</li>
+        </ul>
+    </div>
+
+    <div style="background-color: #e3f2fd; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #1565c0;">
+        <h3 style="color: #1565c0; margin-top: 0;">Compact Toolbar Controls</h3>
+        <ul>
+            <li><strong>Toggle button</strong> — enable/disable noise layer with one click</li>
+            <li><strong>Type selector</strong> — choose between White, Pink, Brown, and Grey</li>
+            <li><strong>Level spinbox</strong> — adjust mix from 0.00 (pure tone) to 1.00 (pure noise)</li>
+            <li><strong>Real-time mixing</strong> — applies to all tone types (binaural, isochronic, generator)</li>
+        </ul>
+    </div>
+
+    <div style="background-color: #fff3e0; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #e65100;">
+        <h3 style="color: #e65100; margin-top: 0;">Engine Integration</h3>
+        <ul>
+            <li><strong>Voss-McCartney pink noise</strong> — 8-stage sweet spot for smooth, natural sound</li>
+            <li><strong>Real-time generation</strong> — no files needed, infinite length</li>
+            <li><strong>State reset</strong> — properly resets with stop/play</li>
+            <li><strong>Crossfade mixing</strong> — seamless blend between tone and noise</li>
+        </ul>
+    </div>
+</div>
+
+<div style="background-color: #f3e5f5; padding: 15px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #7b1fa2;">
+    <h2 style="color: #6a1b9a; margin-top: 0;">Radionics Console (Experimental) — Version 1.6.2 <span style="font-size: 0.75em; background-color: #7b1fa2; color: white; padding: 2px 8px; border-radius: 12px; vertical-align: middle;">NEW</span></h2>
+    <p>Version 1.6.2 introduces the Radionics Console — an experimental intention-based frequency generation tool that encodes your intent into audio tones.</p>
+
+    <div style="background-color: #ede7f6; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #7b1fa2;">
+        <h3 style="color: #6a1b9a; margin-top: 0;">Intention-Based Frequency Generation</h3>
+        <ul>
+            <li><strong>Target & Trend</strong> — set who this is for and what you want to achieve</li>
+            <li><strong>Three interactive dials</strong> — click and hold to spin, release to lock your intention seed</li>
+            <li><strong>Combined seed</strong> — maps to a 0–5 Hz frequency offset from base frequency (20–1000 Hz)</li>
+            <li><strong>Continuous broadcast mode</strong> — intention persists even after you walk away</li>
+        </ul>
+    </div>
+
+    <div style="background-color: #e8f5e9; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #2e7d32;">
+        <h3 style="color: #2e7d32; margin-top: 0;">Session Management</h3>
+        <ul>
+            <li><strong>Save/Load</strong> — store and restore sessions as JSON with images, frequencies, and dial settings</li>
+            <li><strong>Image upload</strong> — add visual witness for your target and trend</li>
+            <li><strong>Reset confirmation</strong> — prevents accidental clearing of session data</li>
+        </ul>
+    </div>
+
+    <div style="background-color: #e3f2fd; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #1565c0;">
+        <h3 style="color: #1565c0; margin-top: 0;">Help Menu</h3>
+        <ul>
+            <li><strong>Comprehensive theory guide</strong> — explains radionics, manifestation, and "spooky action at a distance"</li>
+            <li><strong>Hardware integration</strong> — advanced practitioners can connect to amplifiers, Moebius coils, crystals, and orgonite</li>
+            <li><strong>Philosophical notes</strong> — the universe as vibrational and intention as tuning</li>
+        </ul>
+    </div>
+</div>
+
+<div style="background-color: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #1976d2;">
+    <h2 style="color: #1565c0; margin-top: 0;">Brainwave Presets & Cover Art — Version 1.6.1 <span style="font-size: 0.75em; background-color: #1976d2; color: white; padding: 2px 8px; border-radius: 12px; vertical-align: middle;">NEW</span></h2>
+    <p>Version 1.6.1 adds a massive library of brainwave presets and full cover art support for your music tracks.</p>
+
+    <div style="background-color: #e3f2fd; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #1565c0;">
+        <h3 style="color: #1565c0; margin-top: 0;">47+ Brainwave Presets</h3>
+        <ul>
+            <li><strong>Sleep & dreams</strong> — deep delta, hypnagogic, lucid dreaming induction</li>
+            <li><strong>Meditation</strong> — theta void, heart coherence, zen stillness</li>
+            <li><strong>Focus & productivity</strong> — deep work 90min, ADHD calm, gamma 40Hz</li>
+            <li><strong>Altered states</strong> — DMT mimic, psilocybin journey, theta gateway</li>
+            <li><strong>Solfeggio frequencies</strong> — 396, 417, 528, 639, 741, 852 Hz carriers</li>
+            <li><strong>Therapeutic</strong> — anxiety release, PTSD healing, migraine relief</li>
+        </ul>
+    </div>
+
+    <div style="background-color: #e8f5e9; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #2e7d32;">
+        <h3 style="color: #2e7d32; margin-top: 0;">Cover Art Support</h3>
+        <ul>
+            <li><strong>ffmpeg extraction</strong> — pulls embedded album art (Qt Multimedia couldn't)</li>
+            <li><strong>Smart caching</strong> — QMap stores original full-quality images per track</li>
+            <li><strong>Hover zoom</strong> — 1.15x magnification from original (no quality loss)</li>
+            <li><strong>Auto cleanup</strong> — clears old art when switching to tracks without images</li>
+        </ul>
+    </div>
+
+    <div style="background-color: #fff3e0; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #e65100;">
+        <h3 style="color: #e65100; margin-top: 0;">Fixed</h3>
+        <ul>
+            <li>QDoubleSpinBox now accepts manual entry below 0.5 Hz with setSingleStep(0.1)</li>
+            <li>Pulse frequency spinbox validation matches engine's 0.10 Hz minimum</li>
+        </ul>
+    </div>
+</div>
+
+
+<div style="background-color: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #1976d2;">
+    <h2 style="color: #1565c0; margin-top: 0;">Floating Windows — Version 1.6.0 <span style="font-size: 0.75em; background-color: #1976d2; color: white; padding: 2px 8px; border-radius: 12px; vertical-align: middle;">NEW</span></h2>
+    <p>Version 1.6.0 decouples video and visual stimulation from the tab system, giving you independent floating windows and smarter playlist management.</p>
+
+    <div style="background-color: #e3f2fd; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #1565c0;">
+        <h3 style="color: #1565c0; margin-top: 0;">Independent Windows</h3>
+        <ul>
+            <li><strong>Video player</strong> now opens in its own floating window — no tab embedding</li>
+            <li><strong>Visual Stimulation (Flicker)</strong> also floats independently</li>
+            <li><strong>Fullscreen</strong> removes titlebar for immersive experience</li>
+            <li>Video and Flicker can be used simultaneously without mode switching</li>
+        </ul>
+    </div>
+
+    <div style="background-color: #e8f5e9; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #2e7d32;">
+        <h3 style="color: #2e7d32; margin-top: 0;">Smarter Playlists</h3>
+        <ul>
+            <li><strong>Track persistence</strong> — each playlist remembers its last selected track</li>
+            <li><strong>Unified file handling</strong> — single extension list with duplicate detection</li>
+            <li><strong>Load playlist</strong> directly into current tab with overwrite confirmation</li>
+            <li><strong>Save All</strong> now shows detailed success/error summary</li>
+        </ul>
+    </div>
+</div>
+
+
+<div style="background-color: #e8f5e9; padding: 15px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #43a047;">
+    <h2 style="color: #2e7d32; margin-top: 0;">Streaming Support — Version 1.5.3 <span style="font-size: 0.75em; background-color: #43a047; color: white; padding: 2px 8px; border-radius: 12px; vertical-align: middle;">NEW</span></h2>
+    <p>Version 1.5.3 introduces comprehensive streaming support for YouTube and major video platforms, transforming Jasmine into a true media player that handles both local files and online streams.</p>
+
+    <div style="background-color: #e8f5e9; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #2e7d32;">
+        <h3 style="color: #2e7d32; margin-top: 0;">YouTube & Streaming Sites</h3>
+        <p>Add YouTube, Dailymotion, Rumble, Odysee, and Vimeo links directly to your playlists:</p>
+        <ul>
+            <li><strong>Unified extraction</strong> using single-process yt-dlp with 9-second timeout</li>
+            <li><strong>Reliable URL retrieval</strong> with buffer accumulation</li>
+            <li><strong>Proper process cleanup</strong> preventing memory leaks and crashes</li>
+            <li><strong>Clear Stream button</strong> to cancel extraction and unload player</li>
+        </ul>
+    </div>
+
+    <div style="background-color: #fff3e0; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #ff9800;">
+        <h3 style="color: #e65100; margin-top: 0;">Add Stream Feature (Ctrl+U)</h3>
+        <p>Enhanced URL input with broad format support:</p>
+        <ul>
+            <li><strong>Video formats:</strong> .mp4, .mkv, .webm, .avi, .mov, .flv, .mpeg</li>
+            <li><strong>Audio formats:</strong> .mp3, .flac, .wav, .aac, .opus, .ogg</li>
+            <li><strong>Playlist formats:</strong> .m3u8, .m3u, .ts</li>
+            <li>Fullscreen prevention ensures safe URL entry</li>
+        </ul>
+    </div>
+
+    <div style="background-color: #e3f2fd; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #1565c0;">
+        <h3 style="color: #1565c0; margin-top: 0;">Technical Improvements</h3>
+        <ul>
+            <li>Single unified function replaces separate YouTube/generic handlers</li>
+            <li>User-agent header for better site compatibility</li>
+            <li>Process crashes eliminated (no more nested processes)</li>
+            <li>Stream extraction cancels instantly without restart</li>
+        </ul>
+    </div>
+</div>
+
+<div style="background-color: #fce4ec; padding: 15px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #e91e63;">
+    <h2 style="color: #c2185b; margin-top: 0;">Stability Fix — Version 1.5.2</h2>
+
+    <div style="background-color: #fce4ec; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #e91e63;">
+        <h3 style="color: #c2185b; margin-top: 0;">Critical Crash Fixed</h3>
+        <p>Application no longer crashes when changing waveform from Sine to Square/Triangle/Sawtooth in Visual Stimulation dialog.</p>
+        <ul>
+            <li><strong>Root cause:</strong> Null pointer access to <code>m_visStimDialog</code> in waveform change handlers</li>
+            <li><strong>Fix:</strong> Added proper null checks before calling <code>syncWaveType()</code></li>
+            <li><strong>Affected:</strong> <code>onWaveformChanged()</code> and <code>onToneTypeComboIndexChanged()</code></li>
+        </ul>
+    </div>
+
+    <div style="background-color: #fce4ec; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #e91e63;">
+        <h3 style="color: #c2185b; margin-top: 0;">Stability Improvements</h3>
+        <ul>
+            <li>Visual stimulation dialog now safely handles uninitialized states</li>
+            <li>Better stability during tone type switching (BINAURAL/ISOCHRONIC/GENERATOR)</li>
+        </ul>
+    </div>
+</div>
+
+
+            <div style="background-color: #f5eef8; padding: 15px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #8e44ad;">
+                <h2 style="color: #8e44ad; margin-top: 0;">Dark Theme — Version 1.5.1 <span style="font-size: 0.75em; background-color: #8e44ad; color: white; padding: 2px 8px; border-radius: 12px; vertical-align: middle;">NEW</span></h2>
+                <p>Version 1.5.1 introduces a full dark theme mode, reducing eye strain during extended sessions and providing a sleek, modern interface for low-light environments.</p>
+
+                <div style="background-color: #ede7f6; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #7b1fa2;">
+                    <h3 style="color: #7b1fa2; margin-top: 0;">Theme Toggle</h3>
+                    <p>Switch seamlessly between light and dark themes via the View menu. The theme preference persists across application restarts.</p>
+                    <ul>
+                        <li><strong>View → Dark Theme</strong> menu option with checkmark indicator</li>
+                        <li><strong>Persistent setting</strong> saved to user preferences</li>
+                        <li><strong>Instant application</strong> without restart required</li>
+                    </ul>
+                </div>
+
+                <div style="background-color: #fce4ec; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #e91e63;">
+                    <h3 style="color: #c2185b; margin-top: 0;">Comprehensive Dark Styling</h3>
+                    <p>All interface elements adapt to the dark theme for a cohesive visual experience:</p>
+                    <ul>
+                        <li><strong>Main window</strong> with dark background and reduced glare</li>
+                        <li><strong>All dialogs</strong> (Help, Donation, Settings) with dark styling</li>
+                        <li><strong>Splitter handles</strong> with subtle beige-yellow accents</li>
+                        <li><strong>Buttons and controls</strong> with dark-appropriate colors</li>
+                        <li><strong>Text editors and previews</strong> with reduced brightness</li>
+                    </ul>
+                </div>
+
+                <div style="background-color: #e8f5e9; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #43a047;">
+                    <h3 style="color: #2e7d32; margin-top: 0;">Eye Comfort Features</h3>
+                    <p>Designed for extended use with reduced blue light emission and optimized contrast ratios:</p>
+                    <ul>
+                        <li><strong>Reduced luminance</strong> across all UI components</li>
+                        <li><strong>High contrast text</strong> for readability</li>
+                        <li><strong>Subtle accent colors</strong> that don't cause eye fatigue</li>
+                        <li><strong>Consistent dark palette</strong> throughout the application</li>
+                    </ul>
+                </div>
+
+                <p><strong>User Workflow:</strong> Open View menu → Check "Dark Theme" → Interface instantly switches to dark mode → Preference saved for future sessions</p>
+            </div>
+
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #2c3e50;">
+            <h1 style="color: #8e44ad; text-align: center; margin-bottom: 20px;">What's New - Dynamic Audio Engine & Enhanced Features</h1>
+
+            <div style="background-color: #f5eef8; padding: 15px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #8e44ad;">
+                <h2 style="color: #8e44ad; margin-top: 0;">Visual Brainwave Entrainment — Version 1.5.0 <span style="font-size: 0.75em; background-color: #8e44ad; color: white; padding: 2px 8px; border-radius: 12px; vertical-align: middle;">NEW</span></h2>
+                <p>Version 1.5.0 introduces a full audiovisual entrainment system, adding an OpenGL-powered flicker engine directly on the video screen to reinforce your audio sessions through sight as well as sound.</p>
+
+                <div style="background-color: #ede7f6; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #7b1fa2;">
+                    <h3 style="color: #7b1fa2; margin-top: 0;">OpenGL Flicker Engine</h3>
+                    <p>A real-time OpenGL renderer pulses the video screen at the active beat frequency, creating simultaneous audiovisual stimulation that targets the same brainwave band through both hearing and sight.</p>
+                    <ul>
+                        <li><strong>Zero-latency rendering</strong> locked to the active beat frequency</li>
+                        <li><strong>Runs directly on the video screen</strong> — no separate window needed</li>
+                        <li><strong>Accessible via the ✦ button</strong> on the video toolbar</li>
+                    </ul>
+                </div>
+
+                <div style="background-color: #fce4ec; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #e91e63;">
+                    <h3 style="color: #c2185b; margin-top: 0;">Customisable Flicker Colors</h3>
+                    <p>Pick any on/off color combination for the flicker cycle using the built-in color picker. Choose deep red on black for a warm, low-stimulation session, or white on black for maximum contrast.</p>
+                </div>
+
+                <div style="background-color: #e8f5e9; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #43a047;">
+                    <h3 style="color: #2e7d32; margin-top: 0;">Brightness Envelope Sync</h3>
+                    <p>The flicker envelope automatically mirrors the active audio waveform — sine, square, or sawtooth — for a fully coherent audiovisual experience.</p>
+                    <ul>
+                        <li><strong>Auto-sync:</strong> Envelope matches the audio waveform by default</li>
+                        <li><strong>Override mode:</strong> Decouple the flicker shape and choose sine (smooth), square (hard cut), or sawtooth (ramp) independently</li>
+                    </ul>
+                </div>
+
+                <div style="background-color: #e3f2fd; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #1e88e5;">
+                    <h3 style="color: #1565c0; margin-top: 0;">Frequency Sync with Override</h3>
+                    <p>The flicker frequency locks to the active beat by default. An optional override spinbox lets you set an independent flicker frequency, with a live brainwave band label (delta / theta / alpha / beta / gamma) updating as you adjust.</p>
+                    <ul>
+                        <li><strong>Default:</strong> Locked to the audio beat frequency</li>
+                        <li><strong>Override:</strong> Set any frequency independently for advanced cross-frequency protocols</li>
+                        <li><strong>Live band label</strong> updates in real time</li>
+                    </ul>
+                </div>
+
+                <div style="background-color: #fff8e1; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #ffa000;">
+                    <h3 style="color: #e65100; margin-top: 0;">Subliminal Text Overlay</h3>
+                    <p>Display an affirmation or intention-setting message on the flicker screen during your session. The receptive mental state induced by entrainment may enhance absorption of a positive message.</p>
+                    <ul>
+                        <li><strong>Display modes:</strong> Flash (synced with each pulse), Always (visible throughout), or Off</li>
+                        <li><strong>Configurable styling:</strong> Font size, foreground color, and background color with full alpha transparency support</li>
+                        <li><strong>Live preview</strong> in the control panel shows exactly how the text will appear</li>
+                    </ul>
+                </div>
+
+                <div style="background-color: #fff3e0; border: 3px solid #e65100; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                    <h3 style="color: #bf360c; text-align: center; margin-top: 0;">CRITICAL — Exiting Fullscreen During Flicker</h3>
+                    <p style="font-weight: bold; color: #bf360c; text-align: center;">
+                        When the flicker is running in fullscreen mode the screen may be difficult or disorienting to look at.<br>
+                        You can exit fullscreen at any time using either of these methods:
+                    </p>
+                    <ul style="color: #bf360c; padding-left: 20px;">
+                        <li><strong>Press the Esc key</strong> — immediately exits fullscreen and stops the flicker</li>
+                        <li><strong>Right-click anywhere on the screen</strong> — opens the context menu, from which you can exit fullscreen or stop the session</li>
+                    </ul>
+                    <p style="color: #bf360c;"><strong>Remember these controls before entering fullscreen,</strong> especially if you are using high-intensity settings or are new to visual entrainment.</p>
+                </div>
+
+                <p><strong>User Workflow:</strong> Start a binaural or isochronic session → Open the video player → Click ✦ → Configure colors, envelope, and frequency → Press ▶ Start → The screen pulses in sync with your beat</p>
+            </div>
+
+            <div style="background-color: #f0f0f5; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
+                <h2 style="color: #8e44ad; margin-top: 0;">Major Feature Additions - Version 1.3.0</h2>
+
+                <div style="background-color: #e8f4f8; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #3498db;">
+                    <h3 style="color: #3498db; margin-top: 0;">Multi-Stage Session Manager</h3>
+                    <p>A sophisticated system for creating and executing timed sequences of audio tones. Users define multiple stages with parameters (binaural/isochronic tones, frequencies, waveforms, duration, volume) that play sequentially.</p>
+                    <ul>
+                        <li><strong>Text-based stage definition</strong> using simple colon-separated format</li>
+                        <li><strong>Three tone types</strong>: Binaural (beat frequencies), Isochronic (pulsed), Generator (mono)</li>
+                        <li><strong>Full session control</strong>: Play, pause, stop, save/load sessions</li>
+                        <li><strong>Real-time visual feedback</strong>: Current stage highlighting, time remaining display</li>
+                        <li><strong>Auto-transitions</strong> between stages with volume fading</li>
+                        <li><strong>File support</strong>: Save/load sessions as .txt or .bsession files</li>
+                        <li><strong>Parameter validation</strong> with error messages</li>
+                        <li><strong>Timer synchronization</strong> between stage and total session time</li>
+                    </ul>
+                    <p><strong>User Workflow:</strong> Enter stages → Parse/validate → Save → Play → Monitor progress with visual highlighting</p>
+                </div>
+
+                <div style="background-color: #f0f8ff; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #9b59b6;">
+                    <h3 style="color: #9b59b6; margin-top: 0;">CUE Sheet Import Feature</h3>
+                    <p>A tool for importing and navigating audio tracks defined in CUE sheet files. Parses standard CUE files to extract track information and enables direct playback of individual tracks within long audio files.</p>
+                    <ul>
+                        <li><strong>Load standard CUE files</strong> (.cue format) with associated audio files</li>
+                        <li><strong>Track list display</strong> showing track numbers, titles, performers, and start times</li>
+                        <li><strong>Direct track access</strong> via double-click or play button</li>
+                        <li><strong>Navigation controls</strong>: Previous/Next track buttons</li>
+                        <li><strong>Relative path handling</strong> automatically resolves audio file locations</li>
+                        <li><strong>User confirmation dialog</strong> before loading parsed tracks</li>
+                        <li><strong>Integration with audio player</strong> - sends exact start positions to main application</li>
+                    </ul>
+                    <p><strong>User Workflow:</strong> Load CUE file → View track list → Select track → Play from precise start position</p>
+                </div>
+
+                <div style="background-color: #fff8e1; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #e67e22;">
+                    <h3 style="color: #e67e22; margin-top: 0;">Digital Seek Widget</h3>
+                    <p>A precision navigation tool allowing users to jump to specific time positions within audio tracks.</p>
+                    <ul>
+                        <li>Enter exact time values in minutes:seconds format</li>
+                        <li>Instantly seek to precise positions in the current track</li>
+                        <li>Fine-grained control over playback location</li>
+                        <li>Quick navigation without manual scrolling</li>
+                    </ul>
+                </div>
+
+                <div style="background-color: #f0fff0; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #2E8B57;">
+                    <h3 style="color: #2E8B57; margin-top: 0;">Drag-and-Drop File Import</h3>
+                    <p>Streamlined file import functionality for enhanced workflow efficiency.</p>
+                    <ul>
+                        <li>Drag music files directly from your file system into the application</li>
+                        <li>Supports various audio formats</li>
+                        <li>Quick loading without traditional file dialogs</li>
+                        <li>Intuitive file management</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="background-color: #ecf0f1; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
+                <h2 style="color: #2c3e50; margin-top: 0;">BinauralPlayer Goes Fully Dynamic - Version 1.2.0</h2>
+                <p>Tone generation has been switched to a real-time dynamic engine.</p>
+                <ul>
+                    <li>Buffered tone generation removed entirely.</li>
+                    <li>No delays or gaps when increasing or decreasing frequencies — changes are applied instantly.</li>
+                </ul>
+                <p>This milestone opens the road to new features:</p>
+                <ul>
+                    <li>Programmable multi-stage sessions</li>
+                    <li>Per-stage frequency changes</li>
+                    <li>Support for binaural beats and isochronic pulses within complex session flows</li>
+                </ul>
+            </div>
+
+            <div style="background-color: #ecf0f1; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
+                <h2 style="color: #2c3e50; margin-top: 0;">Introducing the Ambient Sound Control System - Version 1.1.0</h2>
+                <p>A powerful new feature that lets you create and control layered nature soundscapes
+                for relaxation, focus, meditation, and atmospheric enhancement.</p>
+            </div>
+
+            <h2 style="color: #2E8B57; border-bottom: 2px solid #2E8B57; padding-bottom: 5px;">Nature Toolbar Features</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #2E8B57;">5-Channel Ambient Mixer</h3>
+                <p>Five independent sound players that can run simultaneously. Create complex sound environments
+                by mixing rain, forest, thunder, ocean, and more.</p>
+
+                <h3 style="color: #2E8B57;">Global Power Control</h3>
+                <p>Single power button to enable/disable all nature sounds at once. Perfect for quick mute
+                or instant atmosphere activation.</p>
+
+                <h3 style="color: #2E8B57;">Master Transport Controls</h3>
+                <p>Play, pause, and stop ALL active nature sounds simultaneously. Color-coded buttons provide
+                clear visual feedback: green (play), orange (pause), red (stop).</p>
+
+                <h3 style="color: #2E8B57;">Individual Player Buttons</h3>
+                <p>Each channel has its own button showing name, state, and status. Single-click toggles
+                play/pause. Color indicates status: green (playing), orange (paused), gray (disabled).</p>
+
+                <h3 style="color: #2E8B57;">Master Volume Control</h3>
+                <p>Slider controls overall ambient sound level with perceptual volume curve for natural
+                human hearing response.</p>
+            </div>
+
+            <h2 style="color: #9b59b6; border-bottom: 2px solid #9b59b6; padding-bottom: 5px;">Preset System</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #9b59b6;">Save Configurations</h3>
+                <p>Store complete sound setups including audio files, volumes, names, and enabled states.</p>
+
+                <h3 style="color: #9b59b6;">Load Presets</h3>
+                <p>Quickly switch between saved environments like "Rainy Forest", "Ocean Waves", or "Focus Study".</p>
+
+                <h3 style="color: #9b59b6;">Reset Function</h3>
+                <p>One-click restoration to default settings with confirmation dialog for safety.</p>
+            </div>
+
+            <h2 style="color: #e67e22; border-bottom: 2px solid #e67e22; padding-bottom: 5px;">Player Capabilities</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #e67e22;">Multi-Format Audio</h3>
+                <p>Supports MP3, WAV, OGG, FLAC, and M4A files with integrated file browser.</p>
+
+                <h3 style="color: #e67e22;">Custom Naming</h3>
+                <p>Give each channel descriptive names up to 10 characters (e.g., "Rain", "Birds", "Thunder").</p>
+
+                <h3 style="color: #e67e22;">Auto-Repeat</h3>
+                <p>Loop audio files seamlessly for continuous background ambience.</p>
+
+                <h3 style="color: #e67e22;">Individual Volume</h3>
+                <p>Fine-tune each channel's volume independently (0-100%).</p>
+
+                <h3 style="color: #e67e22;">Progress Tracking</h3>
+                <p>See playback progress with seek capability in detailed settings dialog.</p>
+            </div>
+
+            <h2 style="color: #3498db; border-bottom: 2px solid #3498db; padding-bottom: 5px;">Interface Design</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #3498db;">Non-Destructive Dialogs</h3>
+                <p>Player settings dialogs hide instead of close, preserving your configuration state.</p>
+
+                <h3 style="color: #3498db;">Visual Status Indicators</h3>
+                <p>Buttons show real-time status with icons and colors for instant recognition.</p>
+
+                <h3 style="color: #3498db;">Tooltip Guidance</h3>
+                <p>All controls have descriptive tooltips explaining their function.</p>
+
+                <h3 style="color: #3498db;">Responsive Layout</h3>
+                <p>Clean toolbar design that integrates seamlessly with existing interface.</p>
+            </div>
+
+            <h2 style="color: #1abc9c; border-bottom: 2px solid #1abc9c; padding-bottom: 5px;">Quick Start Guide</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #1abc9c;">Enhanced Workflow Integration</h3>
+                <p>Combine all new features for powerful audio experiences:</p>
+                <ol style="margin-left: 20px; padding-left: 0;">
+                    <li><strong>Drag-and-drop</strong> music files directly into the application</li>
+                    <li><strong>Load CUE sheets</strong> for structured album navigation</li>
+                    <li><strong>Use digital seek</strong> for precise time jumping within tracks</li>
+                    <li><strong>Create multi-stage sessions</strong> for programmable tone sequences</li>
+                    <li><strong>Mix with ambient sounds</strong> for layered audio environments</li>
+                    <li><strong>Enable visual entrainment</strong> via the ✦ button for full audiovisual stimulation</li>
+                </ol>
+
+                <h3 style="color: #1abc9c;">Getting Started</h3>
+                <ol style="margin-left: 20px; padding-left: 0;">
+                    <li><strong>Power On</strong>: Click the ○ button to activate the system</li>
+                    <li><strong>Add Sounds</strong>: Click any player button (P1-P5) to open settings</li>
+                    <li><strong>Browse Files</strong>: Select nature sound files for each channel</li>
+                    <li><strong>Customize Names</strong>: Give descriptive names to each channel</li>
+                    <li><strong>Adjust Volumes</strong>: Set levels to create your perfect mix</li>
+                    <li><strong>Control Playback</strong>: Use master controls or click individual buttons</li>
+                </ol>
+
+                <h3 style="color: #1abc9c;">Download Nature Sounds</h3>
+                <p>Get high-quality, royalty-free ambient sounds from:</p>
+                <div style="background-color: #f0f9ff; padding: 15px; border-radius: 8px; border-left: 4px solid #3498db; margin: 15px 0;">
+                    <p><strong>Pixabay Sound Effects:</strong> <a href="https://pixabay.com/sound-effects/search/nature/" style="color: #3498db; text-decoration: none;">https://pixabay.com/sound-effects/search/nature/</a></p>
+                    <p>After downloading, place your audio files in:</p>
+                    <div style="background-color: #e8f4f8; padding: 10px; border-radius: 6px; font-family: monospace; margin: 10px 0;">
+                        ~/Documents/BinauralPlayer/ambient-tracks/
+                    </div>
+                    <p>Recommended downloads:</p>
+                    <ul style="margin-left: 20px; padding-left: 0;">
+                        <li>Rain & Thunderstorms</li>
+                        <li>Forest & Birds</li>
+                        <li>Ocean Waves</li>
+                        <li>Streams & Rivers</li>
+                        <li>Wind & Nature Ambience</li>
+                    </ul>
+                    <p style="font-style: italic; margin-top: 10px;">Tip: The ambient player will automatically look for files in this directory when browsing!</p>
+                </div>
+
+                <h3 style="color: #1abc9c;">Pro Tips</h3>
+                <ul style="margin-left: 20px; padding-left: 0;">
+                    <li>Start with 2-3 complementary sounds for best results</li>
+                    <li>Save your favorite mixes as presets for quick access</li>
+                    <li>Use the power button for instant silence during calls</li>
+                    <li>Combine binaural beats with ambient sounds for enhanced meditation</li>
+                    <li>Create multi-stage sessions for guided audio therapy sequences</li>
+                    <li>Use CUE sheets for seamless album or long-track navigation</li>
+                    <li>Add visual entrainment with the ✦ flicker panel for a deeper audiovisual session</li>
+                </ul>
+            </div>
+
+            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; margin-top: 30px;">
+                <h3 style="color: #2c3e50; margin-top: 0;">Transform Your Audio Environment</h3>
+                <p style="margin-bottom: 0;">BinauralPlayer now offers comprehensive audio control: from dynamic tone generation and programmable multi-stage sessions to ambient sound mixing, precise file navigation, and full OpenGL-powered audiovisual brainwave entrainment. Create your perfect audio environment for relaxation, focus, meditation, or therapeutic purposes with our complete toolkit!</p>
+            </div>
+        </div>
+    )";
+}
+
+QString HelpMenuDialog::getShortcutsContent()
+{
+    return QString();  // TODO: Implement
+}
+
+QString HelpMenuDialog::getAboutContent() {
+    return QString(R"(
+        <div style="text-align: center; font-family: Arial, sans-serif;">
+            <h1 style="color: #2c3e50; margin-bottom: 10px;">Pawns</h1>
+            <h3 style="color: #7f8f8d; margin-bottom: 20px;">Modern Chess Application</h3>
+            <p style="font-size: 16px; margin-bottom: 20px;">
+                A feature-rich chess application built with C++ and Qt6. Play against Stockfish,
+                challenge friends locally or remotely, or watch engines battle it out.
+            </p>
+
+            <div style="background-color: #ecf0f1; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <p style="margin: 5px 0;"><strong>Version:</strong> %1</p>
+                <p style="margin: 5px 0;"><strong>Built with:</strong> Qt Framework (Qt 6)</p>
+                <p style="margin: 5px 0;"><strong>Platform:</strong> Cross-platform</p>
+            </div>
+
+            <div style="margin: 30px 0;">
+                <h4 style="color: #2c3e50;">Key Features</h4>
+
+                <p style="text-align: left; margin: 10px 20px;">
+                    • Human vs Human, Human vs Engine, and Engine vs Engine modes<br>
+                    • Remote Play (P2P) with SSL encryption and chat<br>
+                    • Stockfish engine with adjustable difficulty (0-20)<br>
+                    • Scenario Builder for custom board positions<br>
+                    • Multiple piece sets and board color themes<br>
+                    • PGN export and game replay<br>
+                    • Time controls with visual clocks<br>
+                    • UPnP port forwarding support
+                </p>
+
+                <p><strong style="color: #27ae60;">Available on Flathub</strong></p>
+
+                <p><strong>Source Code:</strong><br>
+                <a href="https://github.com/alamahant/Pawns">
+                → https://github.com/alamahant/Pawns</a></p>
+            </div>
+
+            <hr style="margin: 30px 0; border: 1px solid #bdc3c7;">
+
+            <div style="margin: 20px 0;">
+                <p style="margin: 5px 0; color: #7f8f8d;">
+                    <strong>Copyright © 2026 Alamahant</strong>
+                </p>
+                <p style="margin: 5px 0; font-size: 12px; color: #95a5a6;">
+                    This software is open source (GPL-3.0). Available on Flathub.
+                </p>
+            </div>
+
+            <div style="margin: 20px 0; padding: 15px; background-color: #f8f9fa; border-radius: 8px;">
+                <p style="font-size: 14px; color: #555; margin: 5px 0;">
+                    <strong>Chess Piece Sets</strong>
+                </p>
+                <p style="font-size: 13px; color: #7f8f8d; margin: 5px 0;">
+                    Chess piece sets by <strong>Maurizio Monge</strong>
+                </p>
+                <p style="font-size: 12px; color: #95a5a6; margin: 5px 0;">
+                    <a href="https://poisson.phc.dm.unipi.it/~monge/chess_art.php" style="color: #3498db;">
+                    https://poisson.phc.dm.unipi.it/~monge/chess_art.php</a>
+                </p>
+                <p style="font-size: 12px; color: #95a5a6; margin: 5px 0;">
+                    Used with permission under the terms of the GPL license.
+                </p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <p style="font-size: 14px; color: #7f8f8d;">
+                    Keep Playing!
+                </p>
+            </div>
+        </div>
+    )").arg(QApplication::applicationVersion());
+}
+
+QString HelpMenuDialog::getFeaturesContent()
+{
+    return R"(
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #2c3e50;">
+            <h1 style="color: #2c3e50; text-align: center; margin-bottom: 20px;">Pawns Features</h1>
+
+            <div style="background-color: #ecf0f1; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
+                <h2 style="color: #2c3e50; margin-top: 0;">Modern Chess Application</h2>
+                <p>A feature-rich chess application built with C++ and Qt6. Play against Stockfish,
+                challenge friends locally or remotely, or watch engines battle it out.</p>
+            </div>
+
+            <h2 style="color: #3498db; border-bottom: 2px solid #3498db; padding-bottom: 5px;">Game Modes</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #e67e22;">Human vs Human</h3>
+                <p>Play with a friend on the same computer.</p>
+
+                <h3 style="color: #e67e22;">Human vs Engine</h3>
+                <p>Challenge Stockfish at adjustable difficulty (0-20).</p>
+
+                <h3 style="color: #e67e22;">Engine vs Engine (E2E)</h3>
+                <p>Watch two chess engines battle it out.</p>
+
+                <h3 style="color: #e67e22;">Remote Play (P2P)</h3>
+                <p>Play against a friend over the network with SSL encryption.</p>
+            </div>
+
+            <h2 style="color: #9b59b6; border-bottom: 2px solid #9b59b6; padding-bottom: 5px;">Visual Customization</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #9b59b6;">Multiple Piece Sets</h3>
+                <p>Celtic, Fantasy, Eyes, Skulls, Spatial, and more.</p>
+
+                <h3 style="color: #9b59b6;">Board Color Themes</h3>
+                <p>Classic, Wood, Green, Blue, Gray, Brown.</p>
+
+                <h3 style="color: #9b59b6;">Customizable Background</h3>
+                <p>Choose any color for the view background.</p>
+
+                <h3 style="color: #9b59b6;">Zoom</h3>
+                <p>Ctrl+Mouse Wheel to zoom in/out.</p>
+
+                <h3 style="color: #9b59b6;">Board Markings</h3>
+                <p>Toggle rank and file labels on/off.</p>
+            </div>
+
+            <h2 style="color: #27ae60; border-bottom: 2px solid #27ae60; padding-bottom: 5px;">Time Controls</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #27ae60;">Customizable Time Controls</h3>
+                <p>1-60 minutes with increment options (0-30 seconds).</p>
+
+                <h3 style="color: #27ae60;">Visual Progress Bars</h3>
+                <p>Color changes based on time remaining.</p>
+
+                <h3 style="color: #27ae60;">Time-Out Detection</h3>
+                <p>Automatic flag fall detection.</p>
+
+                <h3 style="color: #27ae60;">Clock Synchronization</h3>
+                <p>Clocks sync automatically in remote play.</p>
+            </div>
+
+            <h2 style="color: #e74c3c; border-bottom: 2px solid #e74c3c; padding-bottom: 5px;">Tools</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #e74c3c;">Scenario Builder</h3>
+                <p>Create and save custom board positions.</p>
+
+                <h3 style="color: #e74c3c;">Save/Load Games</h3>
+                <p>Full state including clocks and difficulty in .chess format.</p>
+
+                <h3 style="color: #e74c3c;">PGN Export</h3>
+                <p>Export games in standard PGN format.</p>
+
+                <h3 style="color: #e74c3c;">Move History</h3>
+                <p>Table view in the dock with full move tracking.</p>
+
+                <h3 style="color: #e74c3c;">Game Replay</h3>
+                <p>Media-style controls to step through games.</p>
+
+                <h3 style="color: #e74c3c;">Engine Console</h3>
+                <p>View engine output and send UCI commands.</p>
+            </div>
+
+            <h2 style="color: #1abc9c; border-bottom: 2px solid #1abc9c; padding-bottom: 5px;">Remote Play</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #1abc9c;">SSL-Encrypted P2P Connection</h3>
+                <p>Secure peer-to-peer communication.</p>
+
+                <h3 style="color: #1abc9c;">Contact List</h3>
+                <p>Store IP addresses and ports for quick connections.</p>
+
+                <h3 style="color: #1abc9c;">In-Game Chat</h3>
+                <p>Real-time text chat with your opponent.</p>
+
+                <h3 style="color: #1abc9c;">UPnP Port Forwarding</h3>
+                <p>Automatic port forwarding support.</p>
+
+                <h3 style="color: #1abc9c;">Game Controls</h3>
+                <p>Resign, draw offer, and stop game functionality.</p>
+            </div>
+
+            <h2 style="color: #e67e22; border-bottom: 2px solid #e67e22; padding-bottom: 5px;">Engine Support</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #e67e22;">Stockfish Engine</h3>
+                <p>With Skill Level control (0-20).</p>
+
+                <h3 style="color: #e67e22;">GNU Chess Support</h3>
+                <p>XBoard mode support.</p>
+
+                <h3 style="color: #e67e22;">Move Validation</h3>
+                <p>Position analysis and legal move checking.</p>
+
+                <h3 style="color: #e67e22;">Game State Detection</h3>
+                <p>Checkmate, stalemate, and draw detection.</p>
+            </div>
+
+            <h2 style="color: #9b59b6; border-bottom: 2px solid #9b59b6; padding-bottom: 5px;">Audio Feedback</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #9b59b6;">Move Sounds</h3>
+                <p>Audio feedback for each move.</p>
+
+                <h3 style="color: #9b59b6;">Check Notification</h3>
+                <p>Sound when the king is in check.</p>
+
+                <h3 style="color: #9b59b6;">Checkmate Sound</h3>
+                <p>Game over sound.</p>
+
+                <h3 style="color: #9b59b6;">Toggle Sound</h3>
+                <p>Enable/disable audio feedback.</p>
+            </div>
+
+            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; margin-top: 30px;">
+                <h3 style="color: #2c3e50; margin-top: 0;">Play, Analyze, and Enjoy</h3>
+                <p style="margin-bottom: 0;">Pawns is a complete chess experience with powerful engine support,
+                remote play, and comprehensive tools for players of all levels.</p>
+            </div>
+        </div>
+    )";
+}
+
+
+QString HelpMenuDialog::getInstructionsContent()
+{
+    return R"(
+<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #2c3e50;">
+    <h1 style="color: #3498db; text-align: center; margin-bottom: 20px;">How to Use Pawns</h1>
+
+    <div style="background-color: #ffeaa7; padding: 15px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #fdcb6e;">
+        <h2 style="color: #2d3436; margin-top: 0;">Quick Start</h2>
+        <p style="font-weight: bold; margin-bottom: 8px;">
+            Pawns is a chess application with multiple game modes, engine support, and analysis tools.
+        </p>
+        <ul style="padding-left: 20px; margin-bottom: 8px;">
+            <li>Click <strong>File → New Game</strong> or press <strong>Ctrl+N</strong> to start</li>
+            <li>Choose players (Human/Machine) and color preferences</li>
+            <li>Set time control and click <strong>Start Game</strong></li>
+        </ul>
+    </div>
+
+    <h2 style="color: #9b59b6; border-bottom: 2px solid #9b59b6; padding-bottom: 5px;">Game Modes</h2>
+
+    <div style="margin: 20px 0;">
+        <h3 style="color: #e67e22;">Human vs Human</h3>
+        <p>Two players on the same computer. Take turns making moves.</p>
+
+        <h3 style="color: #e67e22;">Human vs Engine</h3>
+        <p>Play against Stockfish. Adjust difficulty from 0 (weakest) to 20 (strongest).</p>
+
+        <h3 style="color: #e67e22;">Engine vs Engine (E2E)</h3>
+        <p>Watch Stockfish play against itself. Useful for testing and analysis.</p>
+
+        <h3 style="color: #e67e22;">Remote Play (P2P)</h3>
+        <p>Play against a friend over the network. One player listens, the other connects.</p>
+    </div>
+
+    <h2 style="color: #27ae60; border-bottom: 2px solid #27ae60; padding-bottom: 5px;">Making Moves</h2>
+
+    <div style="margin: 20px 0;">
+        <h3 style="color: #27ae60;">Drag and Drop</h3>
+        <p>Click and drag a piece to the target square. Release to confirm.</p>
+
+        <h3 style="color: #27ae60;">Click and Confirm</h3>
+        <p>Click a piece to select it, then click the <strong>Confirm</strong> button or press <strong>Enter</strong>.</p>
+
+        <h3 style="color: #27ae60;">Undo</h3>
+        <p>Press <strong>Ctrl+Z</strong> or click the <strong>Undo</strong> button to revert the last move.</p>
+    </div>
+
+    <h2 style="color: #8e44ad; border-bottom: 2px solid #8e44ad; padding-bottom: 5px;">Visual Customization</h2>
+
+    <div style="margin: 20px 0;">
+        <h3 style="color: #8e44ad;">Piece Sets</h3>
+        <p>Choose from multiple piece themes in the top-right corner: Celtic, Fantasy, Eyes, Skulls, Spatial, and more.</p>
+
+        <h3 style="color: #8e44ad;">Board Colors</h3>
+        <p>Select board color themes: Classic, Wood, Green, Blue, Gray, Brown.</p>
+
+        <h3 style="color: #8e44ad;">Background Color</h3>
+        <p>Set a custom background color behind the board from the View menu.</p>
+
+        <h3 style="color: #8e44ad;">Zoom</h3>
+        <p>Use <strong>Ctrl+Mouse Wheel</strong> to zoom in and out.</p>
+    </div>
+
+    <h2 style="color: #e74c3c; border-bottom: 2px solid #e74c3c; padding-bottom: 5px;">Time Controls</h2>
+
+    <div style="margin: 20px 0;">
+        <h3 style="color: #e74c3c;">Setting Time</h3>
+        <p>In the New Game dialog, check <strong>Use Clock</strong> and select minutes and increment.</p>
+
+        <h3 style="color: #e74c3c;">Visual Clocks</h3>
+        <p>Progress bars show remaining time. Colors change when time is low.</p>
+
+        <h3 style="color: #e74c3c;">Time Out</h3>
+        <p>If a player's clock reaches zero, they lose on time.</p>
+    </div>
+
+    <h2 style="color: #1abc9c; border-bottom: 2px solid #1abc9c; padding-bottom: 5px;">Remote Play</h2>
+
+    <div style="margin: 20px 0;">
+        <h3 style="color: #1abc9c;">Hosting a Game</h3>
+        <p>Click <strong>Start Listening</strong> in the Remote Play dock. Share your IP with your opponent.</p>
+
+        <h3 style="color: #1abc9c;">Connecting</h3>
+        <p>Enter the opponent's IP and port, then click <strong>Connect to peer</strong>.</p>
+
+        <h3 style="color: #1abc9c;">In-Game Chat</h3>
+        <p>Use the chat input in the Remote Play dock to communicate with your opponent.</p>
+
+        <h3 style="color: #1abc9c;">Game Controls</h3>
+        <p>Stop the game, resign, or offer a draw using the buttons in the top-right corner.</p>
+    </div>
+
+    <h2 style="color: #e67e22; border-bottom: 2px solid #e67e22; padding-bottom: 5px;">Tools</h2>
+
+    <div style="margin: 20px 0;">
+        <h3 style="color: #e67e22;">Scenario Builder</h3>
+        <p>Create custom positions by placing pieces on the board. Save scenarios for later.</p>
+
+        <h3 style="color: #e67e22;">Save Game</h3>
+        <p>Save the current game in .chess format (full state with clocks and difficulty).</p>
+
+        <h3 style="color: #e67e22;">Load Game</h3>
+        <p>Load a previously saved game from the saved directory.</p>
+
+        <h3 style="color: #e67e22;">PGN Export</h3>
+        <p>Export your game in standard PGN format for sharing with other chess software.</p>
+
+        <h3 style="color: #e67e22;">Game Replay</h3>
+        <p>Replay games from move history with media-style controls.</p>
+
+        <h3 style="color: #e67e22;">Engine Console</h3>
+        <p>View Stockfish output and send UCI commands directly to the engine.</p>
+    </div>
+
+    <h2 style="color: #3498db; border-bottom: 2px solid #3498db; padding-bottom: 5px;">Keyboard Shortcuts</h2>
+
+    <div style="margin: 20px 0;">
+        <p><strong>Ctrl+N</strong> - New Game</p>
+        <p><strong>Ctrl+S</strong> - Save Game</p>
+        <p><strong>Ctrl+O</strong> - Load Game</p>
+        <p><strong>Ctrl+Z</strong> - Undo Move</p>
+        <p><strong>Ctrl+F</strong> - Show Current FEN</p>
+        <p><strong>Ctrl+Shift+R</strong> - Show Remote Dock / Replay</p>
+        <p><strong>Ctrl+Shift+L</strong> - Show Left Dock</p>
+        <p><strong>Ctrl+Shift+S</strong> - Square Size</p>
+    </div>
+
+    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; margin-top: 30px;">
+        <h3 style="color: #2c3e50; margin-top: 0;">Enjoy the Game</h3>
+        <p style="margin-bottom: 0;">Pawns combines powerful chess engines, remote play, and analysis tools in one application.</p>
+    </div>
+</div>
+    )";
+}
+
+QString HelpMenuDialog::getSecurityContent()
+{
+    return R"(
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #2c3e50;">
+            <h1 style="color: #e74c3c; text-align: center; margin-bottom: 20px;">Security Features</h1>
+
+            <div style="background-color: #ecf0f1; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
+                <h2 style="color: #2c3e50; margin-top: 0;">Master Password Protection</h2>
+                <p>Jasmine includes a comprehensive security system to protect your saved websites, sessions, and sensitive data.</p>
+            </div>
+
+            <h2 style="color: #3498db; border-bottom: 2px solid #3498db; padding-bottom: 5px;">Password Protection Features</h2>
+
+            <div style="margin: 20px 0;">
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Master password requirement on startup</li>
+                    <li>Secure password hashing with salt encryption</li>
+                    <li>Failed attempt protection (5 attempts maximum)</li>
+                    <li>Factory reset option for forgotten passwords</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #27ae60; border-bottom: 2px solid #27ae60; padding-bottom: 5px;">How to Enable Password Protection</h2>
+
+            <div style="margin: 20px 0;">
+                <ol style="margin: 10px 0; padding-left: 25px;">
+                    <li>Go to Security menu → "Require Password on Startup"</li>
+                    <li>Read the security notice and click OK</li>
+                    <li>Enter your new master password</li>
+                    <li>Confirm your password</li>
+                    <li>Jasmine will now require this password on every startup</li>
+                </ol>
+            </div>
+
+            <div style="background-color: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                <h3 style="color: #856404; margin-top: 0;">Important Security Notes</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Choose a strong, memorable password</li>
+                    <li>Write it down in a safe place</li>
+                    <li>If you forget it, you'll need to factory reset</li>
+                    <li>Password is encrypted and stored securely</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #f39c12; border-bottom: 2px solid #f39c12; padding-bottom: 5px;">Changing Your Master Password</h2>
+
+            <div style="margin: 20px 0;">
+                <ol style="margin: 10px 0; padding-left: 25px;">
+                    <li>Go to Security menu → "Change Master Password"</li>
+                    <li>Enter your new password</li>
+                    <li>Confirm the new password</li>
+                    <li>Password is updated immediately</li>
+                </ol>
+            </div>
+
+            <h2 style="color: #e74c3c; border-bottom: 2px solid #e74c3c; padding-bottom: 5px;">Failed Login Protection</h2>
+
+            <div style="margin: 20px 0;">
+                <p><strong>Maximum 5 password attempts allowed</strong></p>
+                <p>After 5 failed attempts, you get two options:</p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li><strong>Exit Application</strong></li>
+                    <li><strong>Factory Reset</strong> (clears all data and security settings)</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #9b59b6; border-bottom: 2px solid #9b59b6; padding-bottom: 5px;">Factory Reset</h2>
+
+            <div style="margin: 20px 0;">
+                <p>If you forget your master password, factory reset will:</p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Remove all security settings</li>
+                    <li>Clear the master password</li>
+                    <li>Reset password protection to disabled</li>
+                    <li>Allow you to start fresh</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #1abc9c; border-bottom: 2px solid #1abc9c; padding-bottom: 5px;">Security Menu Options</h2>
+
+            <div style="margin: 20px 0;">
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li><strong>"Require Password on Startup"</strong> - Toggle password protection on/off</li>
+                    <li><strong>"Change Master Password"</strong> - Update your existing password</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #e67e22; border-bottom: 2px solid #e67e22; padding-bottom: 5px;">Protection States</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #d35400;">When Password Protection is Active:</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Jasmine prompts for password on every startup</li>
+                    <li>All your websites, sessions, and data remain encrypted</li>
+                    <li>No access to application features without correct password</li>
+                </ul>
+
+                <h3 style="color: #d35400;">When Password Protection is Disabled:</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Jasmine starts immediately without password prompt</li>
+                    <li>All features accessible without authentication</li>
+                    <li>Data remains saved but unprotected</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #16a085; border-bottom: 2px solid #16a085; padding-bottom: 5px;">Best Practices</h2>
+
+            <div style="margin: 20px 0;">
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Use a unique password not used elsewhere</li>
+                    <li>Include numbers, letters, and special characters</li>
+                    <li>Avoid easily guessable information</li>
+                    <li>Keep a secure backup of your password</li>
+                    <li>Enable password protection if you store sensitive login information</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #8e44ad; border-bottom: 2px solid #8e44ad; padding-bottom: 5px;">Security Implementation</h2>
+
+            <div style="margin: 20px 0;">
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>SHA-256 encryption with custom salt</li>
+                    <li>No plain text password storage</li>
+                    <li>Secure settings storage</li>
+                    <li>Memory-safe password handling</li>
+                </ul>
+            </div>
+
+            <div style="background-color: #d1ecf1; padding: 15px; border-radius: 8px; margin: 25px 0;">
+                <h3 style="color: #0c5460; margin-top: 0;">Complete Protection</h3>
+                <p style="margin-bottom: 0;">This security system ensures your browsing profiles, saved websites, sessions, and any stored login references remain protected even if someone gains access to your computer.</p>
+            </div>
+        </div>
+    )";
+}
+
+QString HelpMenuDialog::getTwoFAContent()
+{
+    return R"(
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #2c3e50;">
+            <h1 style="color: #e74c3c; text-align: center; margin-bottom: 20px;">2FA Code Generator</h1>
+
+            <div style="background-color: #ecf0f1; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
+                <h2 style="color: #2c3e50; margin-top: 0;">Two-Factor Authentication Manager</h2>
+                <p>Jasmine includes a built-in Two-Factor Authentication (2FA) code generator that helps you manage and generate time-based one-time passwords (TOTP) for your accounts.</p>
+            </div>
+
+            <h2 style="color: #3498db; border-bottom: 2px solid #3498db; padding-bottom: 5px;">What is 2FA?</h2>
+
+            <div style="margin: 20px 0;">
+                <p>Two-Factor Authentication adds an extra layer of security to your accounts by requiring a second form of verification beyond just your password. This usually involves a 6-digit code that changes every 30 seconds.</p>
+            </div>
+
+            <h2 style="color: #27ae60; border-bottom: 2px solid #27ae60; padding-bottom: 5px;">Key Features</h2>
+
+            <div style="margin: 20px 0;">
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Generate 6-digit TOTP codes for any 2FA-enabled account</li>
+                    <li>Real-time code updates every 30 seconds</li>
+                    <li>Visual countdown timer showing when codes refresh</li>
+                    <li>One-click code copying to clipboard</li>
+                    <li>Secure local storage of account secrets</li>
+                    <li>Support for multiple accounts from different services</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #f39c12; border-bottom: 2px solid #f39c12; padding-bottom: 5px;">How to Access</h2>
+
+            <div style="margin: 20px 0;">
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Open the 2FA Manager from the Toolbar icon or the Tools Menu</li>
+                    <li>The manager opens in a separate window</li>
+                    <li>Resizable interface with accounts list and code display</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #9b59b6; border-bottom: 2px solid #9b59b6; padding-bottom: 5px;">Adding 2FA Accounts</h2>
+
+            <div style="margin: 20px 0;">
+                <ol style="margin: 10px 0; padding-left: 25px;">
+                    <li>Click "Add Account" button</li>
+                    <li>Enter account name (e.g., "GitHub", "Google", "Discord")</li>
+                    <li>Paste the secret key from the website's 2FA setup</li>
+                    <li>Optionally enter the issuer/company name</li>
+                    <li>Click OK to save</li>
+                </ol>
+            </div>
+
+            <div style="background-color: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                <h3 style="color: #856404; margin-top: 0;">Where to Find Secret Keys</h3>
+                <p>When enabling 2FA on websites, they typically show:</p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>A QR code for mobile apps</li>
+                    <li>A text secret key (what you need for Jasmine)</li>
+                    <li>Look for "Can't scan QR code?" or "Manual entry" options</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #e74c3c; border-bottom: 2px solid #e74c3c; padding-bottom: 5px;">Using Generated Codes</h2>
+
+            <div style="margin: 20px 0;">
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Select an account from the list</li>
+                    <li>Current 6-digit code displays in large text</li>
+                    <li>Countdown timer shows seconds until next refresh</li>
+                    <li>Click "Copy Code to Clipboard" for easy pasting</li>
+                    <li>Codes automatically update every 30 seconds</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #1abc9c; border-bottom: 2px solid #1abc9c; padding-bottom: 5px;">Visual Indicators</h2>
+
+            <div style="margin: 20px 0;">
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Progress bar shows time remaining (green → yellow → red)</li>
+                    <li>Large, easy-to-read monospace font for codes</li>
+                    <li>Clear countdown text showing refresh time</li>
+                    <li>Copy button changes to "Copied!" for confirmation</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #e67e22; border-bottom: 2px solid #e67e22; padding-bottom: 5px;">Account Management</h2>
+
+            <div style="margin: 20px 0;">
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>View all your 2FA accounts in organized list</li>
+                    <li>Delete accounts you no longer need</li>
+                    <li>Accounts persist between application restarts</li>
+                    <li>Secure local storage (not cloud-synced)</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #8e44ad; border-bottom: 2px solid #8e44ad; padding-bottom: 5px;">Security Notes</h2>
+
+            <div style="margin: 20px 0;">
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Secret keys are stored locally on your device</li>
+                    <li>No internet connection required for code generation</li>
+                    <li>Codes are generated using industry-standard TOTP algorithm</li>
+                    <li>Same codes as Google Authenticator, Authy, etc.</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #16a085; border-bottom: 2px solid #16a085; padding-bottom: 5px;">Supported Services</h2>
+
+            <div style="margin: 20px 0;">
+                <p>Works with any service that supports TOTP 2FA:</p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Google/Gmail accounts</li>
+                    <li>GitHub</li>
+                    <li>Discord</li>
+                    <li>Microsoft accounts</li>
+                    <li>Banking websites</li>
+                    <li>Social media platforms</li>
+                    <li>And many more</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #d35400; border-bottom: 2px solid #d35400; padding-bottom: 5px;">Workflow Example</h2>
+
+            <div style="margin: 20px 0;">
+                <ol style="margin: 10px 0; padding-left: 25px;">
+                    <li>Enable 2FA on GitHub</li>
+                    <li>Copy the secret key from GitHub's setup page</li>
+                    <li>Add account in Jasmine's 2FA Manager</li>
+                    <li>When logging into GitHub, select the account</li>
+                    <li>Copy the current 6-digit code</li>
+                    <li>Paste into GitHub's 2FA prompt</li>
+                </ol>
+            </div>
+
+            <h2 style="color: #7b1fa2; border-bottom: 2px solid #7b1fa2; padding-bottom: 5px;">Benefits Over Mobile Apps</h2>
+
+            <div style="margin: 20px 0;">
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Access codes directly on your computer</li>
+                    <li>No need to grab your phone</li>
+                    <li>Larger, easier-to-read display</li>
+                    <li>Integrated with your browsing workflow</li>
+                    <li>Quick clipboard copying</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #388e3c; border-bottom: 2px solid #388e3c; padding-bottom: 5px;">Time Synchronization</h2>
+
+            <div style="margin: 20px 0;">
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Codes are time-based (30-second intervals)</li>
+                    <li>Uses your system clock for accuracy</li>
+                    <li>Same timing as other authenticator apps</li>
+                    <li>Automatic refresh every second</li>
+                </ul>
+            </div>
+
+            <div style="background-color: #d1ecf1; padding: 15px; border-radius: 8px; margin: 25px 0;">
+                <h3 style="color: #0c5460; margin-top: 0;">Integrated Security</h3>
+                <p style="margin-bottom: 0;">This 2FA manager eliminates the need for separate authenticator apps while providing the same security benefits, making it convenient to access your two-factor codes directly within Jasmine.</p>
+            </div>
+        </div>
+    )";
+}
+
+QString HelpMenuDialog::getDataManagementContent()
+{
+    return R"(
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #2c3e50;">
+            <h1 style="color: #e74c3c; text-align: center; margin-bottom: 20px;">Data Management & Privacy</h1>
+
+            <div style="background-color: #ecf0f1; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
+                <h2 style="color: #2c3e50; margin-top: 0;">Session & Profile Data Management</h2>
+                <p>Jasmine provides comprehensive tools to manage your browsing data, sessions, and privacy settings. Control what data is stored and when to clear it.</p>
+            </div>
+
+            <h2 style="color: #3498db; border-bottom: 2px solid #3498db; padding-bottom: 5px;">Clean Current Session Data</h2>
+
+            <div style="margin: 20px 0;">
+                <p><strong>What it does:</strong></p>
+                <p>Clears browsing data from all currently active sessions and the shared profile.</p>
+
+                <p><strong>Data removed:</strong></p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>All cookies from active sessions</li>
+                    <li>HTTP cache from all profiles</li>
+                    <li>Visited links history</li>
+                    <li>Temporary browsing data</li>
+                </ul>
+
+                <p><strong>When to use:</strong></p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>After browsing sensitive websites</li>
+                    <li>When sharing your computer</li>
+                    <li>To free up storage space</li>
+                    <li>For privacy after online shopping/banking</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #27ae60; border-bottom: 2px solid #27ae60; padding-bottom: 5px;">Clean Shared Profile Data</h2>
+
+            <div style="margin: 20px 0;">
+                <p><strong>What it does:</strong></p>
+                <p>Clears browsing data only from the shared profile, leaving separate tab profiles untouched.</p>
+
+                <p><strong>Data removed:</strong></p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Shared profile cookies only</li>
+                    <li>Shared profile cache</li>
+                    <li>Shared profile visited links</li>
+                </ul>
+
+                <p><strong>What's preserved:</strong></p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Individual tab profile data</li>
+                    <li>Private profile sessions</li>
+                    <li>Separate profile cookies and cache</li>
+                </ul>
+
+                <p><strong>When to use:</strong></p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>When you want to keep private profiles intact</li>
+                    <li>To clear general browsing without affecting work profiles</li>
+                    <li>Selective privacy cleaning</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #e74c3c; border-bottom: 2px solid #e74c3c; padding-bottom: 5px;">Restore Factory Defaults</h2>
+
+            <div style="margin: 20px 0;">
+                <p><strong>What it does:</strong></p>
+                <p>Completely resets Jasmine to its original state, removing all user data and settings.</p>
+
+                <p><strong>Data removed:</strong></p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>All saved websites and bookmarks</li>
+                    <li>All saved sessions</li>
+                    <li>All application settings and preferences</li>
+                    <li>Security settings and master passwords</li>
+                    <li>All browsing data (cookies, cache, history)</li>
+                    <li>Application data directories</li>
+                    <li>Profile configurations</li>
+                </ul>
+            </div>
+
+            <div style="background-color: #f8d7da; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #dc3545;">
+                <h3 style="color: #721c24; margin-top: 0;">Factory Reset Warning</h3>
+                <p style="margin-bottom: 0;"><strong>This action cannot be undone!</strong></p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>All your saved data will be permanently lost</li>
+                    <li>Application will close automatically after reset</li>
+                    <li>You'll need to restart Jasmine manually</li>
+                    <li>All customizations will be lost</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #f39c12; border-bottom: 2px solid #f39c12; padding-bottom: 5px;">How to Access These Features</h2>
+
+            <div style="margin: 20px 0;">
+                <p>All data management options are located in the <strong>Sessions</strong> menu:</p>
+                <ol style="margin: 10px 0; padding-left: 25px;">
+                    <li>Click on "Sessions" in the menu bar</li>
+                    <li>Scroll to the bottom section</li>
+                    <li>Choose your desired cleaning option</li>
+                    <li>Confirm the action in the dialog box</li>
+                </ol>
+            </div>
+
+            <h2 style="color: #9b59b6; border-bottom: 2px solid #9b59b6; padding-bottom: 5px;">Data Types Explained</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #8e44ad;">Cookies</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Login sessions and preferences</li>
+                    <li>Shopping cart contents</li>
+                    <li>Website customizations</li>
+                </ul>
+
+                <h3 style="color: #8e44ad;">HTTP Cache</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Temporarily stored website files</li>
+                    <li>Images, scripts, and stylesheets</li>
+                    <li>Speeds up repeat visits</li>
+                </ul>
+
+                <h3 style="color: #8e44ad;">Visited Links</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>History of visited websites</li>
+                    <li>Link color changes (visited vs unvisited)</li>
+                    <li>Navigation history</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #1abc9c; border-bottom: 2px solid #1abc9c; padding-bottom: 5px;">Privacy Recommendations</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #16a085;">Regular Cleaning (Weekly)</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Use "Clean Shared Profile Data" for routine maintenance</li>
+                    <li>Keeps private profiles intact</li>
+                    <li>Maintains good performance</li>
+                </ul>
+
+                <h3 style="color: #16a085;">Deep Cleaning (Monthly)</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Use "Clean Current Session Data" for thorough cleanup</li>
+                    <li>Clears all active session data</li>
+                    <li>Good for privacy and storage</li>
+                </ul>
+
+                <h3 style="color: #16a085;">Emergency Cleaning</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>After using public computers</li>
+                    <li>When selling or giving away device</li>
+                    <li>After security concerns</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #e67e22; border-bottom: 2px solid #e67e22; padding-bottom: 5px;">Smart Usage Tips</h2>
+
+            <div style="margin: 20px 0;">
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li><strong>Before cleaning:</strong> Save any important sessions you want to keep</li>
+                    <li><strong>Profile separation:</strong> Use private profiles for sensitive browsing</li>
+                    <li><strong>Regular maintenance:</strong> Clean shared profile weekly, all data monthly</li>
+                    <li><strong>Factory reset:</strong> Only use when starting completely fresh</li>
+                    <li><strong>Backup important data:</strong> Export sessions before major cleaning</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #8e44ad; border-bottom: 2px solid #8e44ad; padding-bottom: 5px;">Performance Benefits</h2>
+
+            <div style="margin: 20px 0;">
+                <p><strong>Regular data cleaning provides:</strong></p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Faster application startup</li>
+                    <li>Reduced memory usage</li>
+                    <li>More available storage space</li>
+                    <li>Improved browsing performance</li>
+                    <li>Better privacy protection</li>
+                </ul>
+            </div>
+
+            <div style="background-color: #d1ecf1; padding: 15px; border-radius: 8px; margin: 25px 0;">
+                <h3 style="color: #0c5460; margin-top: 0;">Choose the Right Tool</h3>
+                <p style="margin-bottom: 0;">
+                    <strong>Shared Profile Clean:</strong> For routine maintenance<br>
+                    <strong>Current Session Clean:</strong> For thorough privacy cleaning<br>
+                    <strong>Factory Reset:</strong> For complete fresh start
+                </p>
+            </div>
+        </div>
+    )";
+}
+
+QString HelpMenuDialog::getDownloadManagerContent()
+{
+    return R"(
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #2c3e50;">
+            <h1 style="color: #e74c3c; text-align: center; margin-bottom: 20px;">Download Manager</h1>
+
+            <div style="background-color: #ecf0f1; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
+                <h2 style="color: #2c3e50; margin-top: 0;">Integrated Download Management</h2>
+                <p>Jasmine includes a comprehensive download manager that handles all your file downloads with progress tracking, organization, and easy access to downloaded files.</p>
+            </div>
+
+            <h2 style="color: #3498db; border-bottom: 2px solid #3498db; padding-bottom: 5px;">Key Features</h2>
+
+            <div style="margin: 20px 0;">
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Real-time download progress tracking</li>
+                    <li>Download speed and time remaining calculations</li>
+                    <li>Automatic file organization in dedicated folder</li>
+                    <li>Duplicate filename handling</li>
+                    <li>One-click access to files and folders</li>
+                    <li>Download history management</li>
+                    <li>Cancel active downloads</li>
+                    <li>Clean interface with visual progress bars</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #27ae60; border-bottom: 2px solid #27ae60; padding-bottom: 5px;">How to Access Downloads</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #229954;">Opening the Download Manager</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Click the <strong>Downloads</strong> icon in the toolbar</li>
+                    <li>Or go to <strong>View → Downloads</strong> in the menu</li>
+                    <li>Download window opens showing all current and past downloads</li>
+                </ul>
+
+                <h3 style="color: #229954;">Download Location</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Files are saved to: <code>Downloads/Jasmine/</code></li>
+                    <li>Organized in your system's default Downloads folder</li>
+                    <li>Automatic folder creation if it doesn't exist</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #f39c12; border-bottom: 2px solid #f39c12; padding-bottom: 5px;">Download Progress Tracking</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #d68910;">Real-time Information</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li><strong>File name and size:</strong> Clear identification of what's downloading</li>
+                    <li><strong>Progress bar:</strong> Visual representation of download completion</li>
+                    <li><strong>Speed indicator:</strong> Current download speed (KB/s, MB/s)</li>
+                    <li><strong>Time remaining:</strong> Estimated completion time</li>
+                    <li><strong>Status updates:</strong> Starting, downloading, completed, cancelled</li>
+                </ul>
+
+                <h3 style="color: #d68910;">Progress Display</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Percentage completion with visual progress bar</li>
+                    <li>Downloaded size vs. total file size</li>
+                    <li>Dynamic speed calculations updated every second</li>
+                    <li>Color-coded status indicators</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #9b59b6; border-bottom: 2px solid #9b59b6; padding-bottom: 5px;">Download Controls</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #8e44ad;">During Download</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li><strong>Cancel Button:</strong> Stop active downloads immediately</li>
+                    <li><strong>Open Folder:</strong> Access download directory anytime</li>
+                    <li><strong>Progress Monitoring:</strong> Watch real-time progress</li>
+                </ul>
+
+                <h3 style="color: #8e44ad;">After Download</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li><strong>Open File:</strong> Launch downloaded file directly</li>
+                    <li><strong>Open Folder:</strong> Navigate to file location</li>
+                    <li><strong>Remove from List:</strong> Clean up download history</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #1abc9c; border-bottom: 2px solid #1abc9c; padding-bottom: 5px;">File Organization</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #16a085;">Automatic Organization</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>All downloads saved to dedicated Jasmine folder</li>
+                    <li>Automatic duplicate filename handling</li>
+                    <li>Files renamed with numbers: <code>file.pdf</code>, <code>file (1).pdf</code>, <code>file (2).pdf</code></li>
+                    <li>Preserves original file extensions</li>
+                </ul>
+
+                <h3 style="color: #16a085;">Smart Naming</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Uses original filename from website</li>
+                    <li>Fallback to "download" if no name available</li>
+                    <li>Prevents file overwrites automatically</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #e67e22; border-bottom: 2px solid #e67e22; padding-bottom: 5px;">Download Management</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #d35400;">Window Controls</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li><strong>Clear Finished:</strong> Remove completed/cancelled downloads from list</li>
+                    <li><strong>Open Downloads Folder:</strong> Quick access to download directory</li>
+                    <li><strong>Individual Remove:</strong> Remove specific items from history</li>
+                </ul>
+
+                <h3 style="color: #d35400;">List Management</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Chronological list of all downloads</li>
+                    <li>Persistent across application restarts</li>
+                    <li>Easy cleanup of old downloads</li>
+                    <li>Empty state message when no downloads</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #8e44ad; border-bottom: 2px solid #8e44ad; padding-bottom: 5px;">Download States</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #7b1fa2;">Active Downloads</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li><strong>Starting:</strong> Download initializing</li>
+                    <li><strong>In Progress:</strong> Actively downloading with progress</li>
+                    <li><strong>Speed Display:</strong> Real-time transfer rate</li>
+                    <li><strong>Cancel Option:</strong> Stop button available</li>
+                </ul>
+
+                <h3 style="color: #7b1fa2;">Completed Downloads</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li><strong>Completed:</strong> Successfully downloaded</li>
+                    <li><strong>Cancelled:</strong> User stopped download</li>
+                    <li><strong>Interrupted:</strong> Network or system error</li>
+                    <li><strong>File Access:</strong> Open file/folder buttons available</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 5px;">Performance Features</h2>
+
+            <div style="margin: 20px 0;">
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li><strong>Efficient Memory Usage:</strong> Minimal resource consumption</li>
+                    <li><strong>Background Downloads:</strong> Continue while browsing</li>
+                    <li><strong>Multiple Downloads:</strong> Handle several files simultaneously</li>
+                    <li><strong>Speed Calculation:</strong> Accurate transfer rate monitoring</li>
+                    <li><strong>Progress Updates:</strong> Smooth, real-time progress tracking</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #388e3c; border-bottom: 2px solid #388e3c; padding-bottom: 5px;">Technical Details</h2>
+
+            <div style="margin: 20px 0;">
+                <h3 style="color: #2e7d32;">File Size Formatting</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Automatic unit conversion: B → KB → MB → GB</li>
+                    <li>Decimal precision for readability</li>
+                    <li>Speed shown as size per second</li>
+                </ul>
+
+                <h3 style="color: #2e7d32;">Time Calculations</h3>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Remaining time based on current speed</li>
+                    <li>Format: seconds, minutes, hours as appropriate</li>
+                    <li>Dynamic updates as speed changes</li>
+                </ul>
+            </div>
+
+            <h2 style="color: #5d4037; border-bottom: 2px solid #5d4037; padding-bottom: 5px;">Usage Tips</h2>
+
+            <div style="margin: 20px 0;">
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li><strong>Monitor Progress:</strong> Keep download window open to watch progress</li>
+                    <li><strong>Multiple Downloads:</strong> Start several downloads simultaneously</li>
+                    <li><strong>Quick Access:</strong> Use "Open Folder" for easy file management</li>
+                    <li><strong>Clean History:</strong> Regularly clear finished downloads</li>
+                    <li><strong>Cancel if Needed:</strong> Stop unwanted downloads immediately</li>
+                    <li><strong>File Organization:</strong> Downloads are automatically organized</li>
+                </ul>
+            </div>
+
+            <div style="background-color: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                <h3 style="color: #856404; margin-top: 0;">Platform-Specific Notes</h3>
+                <p><strong>Flathub Version:</strong> Shows download location in dialog</p>
+                <p><strong>Standard Version:</strong> Opens file manager directly</p>
+                <p style="margin-bottom: 0;"><strong>All Platforms:</strong> Downloads saved to system Downloads folder under "Jasmine" subdirectory</p>
+            </div>
+
+            <div style="background-color: #d1ecf1; padding: 15px; border-radius: 8px; margin: 25px 0;">
+                <h3 style="color: #0c5460; margin-top: 0;">Integrated Experience</h3>
+                <p style="margin-bottom: 0;">The download manager seamlessly integrates with your browsing experience, automatically handling all file downloads while providing full control and visibility over the download process.</p>
+            </div>
+        </div>
+    )";
+}
+
+QString HelpMenuDialog::getSitesSessionsContent()
+{
+    return QString(
+        "<h3>Managing Sites</h3>"
+        "<p><strong>Creating a New Site:</strong></p>"
+        "<ul>"
+        "<li>Press the <strong>Clear</strong> button to clear existing fields</li>"
+        "<li>Fill in the <strong>URL</strong> and <strong>Title</strong> (required fields)</li>"
+        "<li>Optionally add <strong>Username</strong>, <strong>Password</strong>, and <strong>Comments</strong></li>"
+        "<li>Press the <strong>Add</strong> button to save the site</li>"
+        "</ul>"
+
+        "<h3>Managing Sessions</h3>"
+        "<p><strong>Creating a New Session:</strong></p>"
+        "<ul>"
+        "<li>Ensure at least one tab is open in the webview</li>"
+        "<li>Select <strong>Save Current Session</strong> from the menu or toolbar</li>"
+        "<li>Give your session a name and click <strong>OK</strong></li>"
+        "<li>Sessions are automatically assigned a randomly generated SVG icon</li>"
+        "</ul>"
+
+        "<h3>Editing Sites and Sessions</h3>"
+        "<p><strong>To edit any site or session:</strong></p>"
+        "<ul>"
+        "<li>Select the item you want to modify</li>"
+        "<li>Enter the new values in the appropriate fields</li>"
+        "<li>Press the <strong>Update</strong> button to save changes</li>"
+        "<li>For sessions: Click the small <strong>Edit</strong> button next to the icon to change it, then click <strong>Update</strong></li>"
+        "</ul>"
+        );
+}
+
+QString HelpMenuDialog::getOnSecurityContent()
+{
+    return QString(
+        "<h3>Security Features Overview</h3>"
+        "<p>Jasmine provides several optional security features designed for your convenience. "
+        "You are completely free to use or not use any of these features based on your preferences.</p>"
+
+        "<h4>Username & Password Storage</h4>"
+        "<ul>"
+        "<li>Storing credentials in website entries is <strong>completely optional</strong></li>"
+        "<li>Leave these fields blank if you prefer to use your own credentials manager</li>"
+        "<li>Stored credentials are saved locally on your device only in binary format</li>"
+        "<li>No data is transmitted over the network</li>"
+        "</ul>"
+
+        "<h4>Master Password Protection</h4>"
+        "<ul>"
+        "<li>Optional feature to protect access to Jasmine</li>"
+        "<li>When enabled, you'll need to enter your master password on startup</li>"
+        "<li>Choose a strong, memorable password and store it safely</li>"
+        "<li>If forgotten, you'll need to perform a factory reset</li>"
+        "</ul>"
+
+        "<h4>Two-Factor Authentication (2FA) Manager</h4>"
+        "<ul>"
+        "<li>Optional convenience tool for generating TOTP codes</li>"
+        "<li>Helps manage 2FA codes for your various accounts</li>"
+        "<li>All secrets are stored locally on your device in binary format</li>"
+        "<li>Use only if you're comfortable with local storage</li>"
+        "</ul>"
+
+        "<h4>Security Disclaimer</h4>"
+        "<p><em>While every reasonable effort has been made to implement a secure framework "
+        "and all sensitive info is stored in binary format within Jasmine, "
+        "these features are provided as conveniences rather than guarantees. Users are responsible "
+        "for deciding what information to store based on their individual security requirements and risk tolerance.</em></p>"
+
+        "<p><strong>Recommendation:</strong> For maximum security, consider using dedicated password managers "
+        "and letting your browser handle credential storage.</p>"
+        );
+}
+
+QString HelpMenuDialog::getOnNewStorageSystemContent() {
+    return QString(
+        "<h3>New Storage System (Jasmine 1.1.0 and onwards)</h3>"
+        "<p>This version of Jasmine uses a new storage system that improves performance and efficiency by using symlinks for profile data. This means that instead of copying entire profile directories, only links are created, saving disk space and speeding up operations.</p>"
+        "<h4>Recommendations:</h4>"
+        "<p>To fully leverage the new storage system and ensure optimal performance, we highly recommend performing a factory reset. This will clear all old data and provide a clean start. You can find the factory reset option in the 'Sessions' menu.</p>"
+        "<h4>Clean up orphaned profile directories on startup:</h4>"
+        "<p>As part of the new storage system, a checkbox is available in the 'Tools' menu to automatically clean up unused, orphaned profile directories at application startup. It is STRONGLY RECOMMENDED to keep this option enabled UNLESS you also have old-format sessions saved.</p>"
+        "<h4>Handling Old-Format Sessions:</h4>"
+        "<p>If you have existing sessions that use the old directory-based storage, you can continue to use them. However, we strongly advise against adding new tabs or saving changes to these older sessions. To ensure optimal performance and avoid potential issues, it's best to create new sessions using the new storage system.</p>"
+        );
+}
+
+QString HelpMenuDialog::getOnNamedProfilesContent()
+{
+    return QString(R"(
+        <div style="text-align: center; font-family: Arial, sans-serif;">
+            <h1 style="color: #2c3e50; margin-bottom: 10px;">Named Shared Profiles</h1>
+            <h3 style="color: #7f8c8d; margin-bottom: 20px;">Contextual Browsing Environments</h3>
+
+            <div style="text-align: left; margin: 20px 0; line-height: 1.6;">
+                <p>
+                    Jasmine's Named Shared Profiles feature takes your browsing organization to the next level by allowing
+                    multiple tabs to share the same browsing context under meaningful labels like "Work," "Home," "Shopping,"
+                    or "Research." This powerful addition bridges the gap between completely isolated private profiles and a
+                    single shared environment.
+                </p>
+
+                <div style="background-color: #ecf0f1; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <h4 style="color: #2c3e50; margin-top: 0;">Examples:</h4>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>Work Profile:</strong> Company email, project management tools, and internal documentation all share cookies and login states</li>
+                        <li><strong>Personal Profile:</strong> Social media and entertainment sites kept separate from work accounts</li>
+                        <li><strong>Finance Profile:</strong> Banking, investment, and budgeting tools with shared authentication</li>
+                        <li><strong>Travel Profile:</strong> Airline, hotel, and rental car sites that need to exchange booking information</li>
+                    </ul>
+                </div>
+
+                <p>
+                    This contextual grouping maintains the perfect balance between isolation and integration: your work accounts
+                    never mix with personal browsing, but related tools within each context can seamlessly communicate when needed.
+                    Named Shared Profiles eliminate the all-or-nothing approach to profile isolation, giving you granular control
+                    over exactly which tabs should share data with each other while maintaining barriers between different areas of your digital life.
+                </p>
+
+                <h3 style="color: #2c3e50; margin-top: 30px;">How to Use Named Profiles</h3>
+
+                <ol style="margin-left: 20px;">
+                    <li><strong>Create Profiles:</strong> In the profile area of the toolbar, in the profileSelector combobox select "New Profile..." and give it a meaningful name like "Work" or "Personal"</li>
+                    <li><strong>Select a Profile:</strong> Choose your desired profile from the dropdown before launching websites</li>
+                    <li><strong>Launch Websites:</strong> Any sites launched while a named profile is selected will share the same browsing context</li>
+                    <li><strong>Create Sessions:</strong> Save groups of tabs launched under the same named profile for quick restoration</li>
+                    <li><strong>Manage Profiles:</strong> Select "Manage Profiles..." to create, delete, or clean profile data</li>
+                </ol>
+
+                <div style="background-color: #e8f4f8; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3498db;">
+                <p><strong>Note:</strong> Keeping the profile selector set to "Default" will use the universal shared profile,
+                which is the standard shared browsing environment. Private profiles (toggled per tab via the Private Toggle Button) always remain
+                completely isolated regardless of named profile selection.</p>
+
+                <p><strong>Simply put:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>To create tabs with private profile, toggle the Private Profile button ON in the toolbar.
+                    This will inactivate the Named Profile selector.</li>
+                    <li>To use a named shared profile, untoggle the Private Profile button (if toggled) and select a previously
+                    created named shared profile from the combobox.</li>
+                    <li>Or leave it set to "Default" to use the universal profile.</li>
+                </ul>
+                </div>
+
+
+
+                <h3 style="color: #2c3e50; margin-top: 30px;">Profile Management</h3>
+                <p>
+                    You can manage your named profiles by selecting "Manage Profiles..." from the profile selector dropdown. This allows you to:
+                </p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Create new profiles</strong> for different contexts or projects</li>
+                    <li><strong>Delete profiles</strong> you no longer need (only if they're not in use by active sessions)</li>
+                    <li><strong>Clean profile data</strong> to remove cookies, cache, and browsing history while keeping the profile</li>
+                </ul>
+
+                <p>
+                    Each named profile maintains its own separate storage for:
+                </p>
+                <ul style="margin-left: 20px;">
+                    <li>Cookies and login sessions</li>
+                    <li>Browsing history and cache</li>
+                    <li>Local storage and website data</li>
+                    <li>Form data and preferences</li>
+                </ul>
+            </div>
+
+            <hr style="margin: 30px 0; border: 1px solid #bdc3c7;">
+
+            <div style="margin: 20px 0;">
+                <p style="font-size: 14px; color: #7f8f8d;">
+                    Organize your digital life with contextual browsing environments
+                </p>
+            </div>
+        </div>
+    )");
+
+}
+
+QString HelpMenuDialog::getChangelogContent()
+{
+    return QString(
+        "<h3>Changelog</h3>"
+
+        "<h4>[v1.2.2] - 2025-10-31</h4>"
+        "<ul>"
+        "<li><b>Custom Context Menu Implementation:</b> Subclassed QWebEnginePage and created a fully functional custom context menu with enhanced functionality and improved user experience.</li>"
+        "<li><b>Consistent Profile Linking:</b> Ensured links opened from a tab share the same profile type as the calling tab, maintaining profile consistency across navigation and new tab operations.</li>"
+        "<li><b>Code Polishes and Improvements:</b> Performed various code optimizations, refactoring, and maintenance improvements for better performance, stability, and maintainability.</li>"
+        "</ul>"
+
+        "<h4>[v1.2.1] - 2025-07-23</h4>"
+        "<ul>"
+        "<li><b>Session Profile Tagging Bug Fixed:</b> Resolved an issue introduced with named profiles where some tabs were not saved or displayed with the correct profile when saving sessions. Now, tabs are reliably saved and shown with their associated profile—Shared Universal, Named, or Private—according to the UI profile settings at launch time.</li>"
+        "<li><b>Improved Security Dialogs and User Experience:</b> All security-related dialogs (master password setup, password protection toggle) now include a Cancel button and properly abort the operation if Cancel or the window close (X) is pressed. This ensures that no unintended changes occur if the user cancels at any step, and toggle actions are always reverted if the process is not completed.</li>"
+        "<li><b>Audio Support in Flatpak:</b> Added `pulseaudio` permission to the Flatpak manifest, enabling sound playback in the application.</li>"
+        "<li><b>Fullscreen Video Support:</b> Implemented full screen functionality for embedded and standalone videos, enhancing the media viewing experience.</li>"
+        "<li><b>Open Copied Link in New Tab:</b> Added a toolbar action and F11 shortcut to instantly open a copied link from the clipboard in a new tab.</li>"
+        "<li><b>Code Optimizations and Polishes:</b> Performed various code improvements and optimizations for better performance, stability, and maintainability.</li>"
+        "</ul>"
+
+        "<h4>[v1.2.0] - 2025-06-20</h4>"
+        "<ul>"
+        "<li><b>Named Shared Profiles:</b> Implemented contextual browsing environments allowing multiple tabs to share the same browsing context under meaningful labels like \"Work,\" \"Home,\" or \"Research\"</li>"
+        "<li><b>Integrated Ad Blocker:</b> Added comprehensive ad blocking functionality with toggle option in Tools menu</li>"
+        "<li><b>Enhanced Browser Privacy:</b> Implemented custom request interceptor with standardized headers and secure default headers</li>"
+        "<li><b>Profile Management Tools:</b> Added profile manager dialog for creating, deleting, and cleaning Named Shared Profiles</li>"
+        "<li><b>UI Improvements:</b> Added visual indicators for active Named profile and improved toolbar layout</li>"
+        "</ul>"
+
+        "<h4>[v1.1.0] - 2025-06-12</h4>"
+        "<ul>"
+        "<li><b>New Symlink-Based Storage System:</b> Dramatically reduces disk space usage by using symbolic links instead of copying entire directories</li>"
+        "<li><b>Progress Bar for Session Saving:</b> Added visual feedback to prevent premature closure during session saves</li>"
+        "<li><b>Automatic Cleanup:</b> Implemented cleanup of orphaned profile directories at startup (configurable in Tools menu)</li>"
+        "<li><b>Help Documentation:</b> Added documentation explaining the new storage system benefits and recommendations</li>"
+        "</ul>"
+
+        "<h4>[v1.0.1] - 2025-06-07</h4>"
+        "<ul>"
+        "<li><b>Enhanced UI and Functionality:</b> Added fully functional URL bar with toggle visibility</li>"
+        "<li><b>Website Card Creation:</b> New feature to create website cards directly from currently loaded URL</li>"
+        "<li><b>Fixed Dashboard Size:</b> Set dashboard to fixed size while keeping web view resizable</li>"
+        "<li><b>Theme Improvements:</b> Enhanced theme handling for help menu items</li>"
+        "<li><b>Bug Fixes:</b> Fixed critical QWebEngineView resizing bugs and website card update button connections</li>"
+        "</ul>"
+
+        "<h4>[v1.0.0] - 2025-06-01</h4>"
+        "<ul>"
+        "<li><b>Initial Release:</b> Jasmine Website and Session Manager</li>"
+        "<li><b>Core Features:</b> Website and session management with card-based interface, multi-tab restoration, private profile system</li>"
+        "<li><b>Security:</b> Master password protection with SHA-256 encryption, two-factor authentication (2FA) code generator</li>"
+        "<li><b>Productivity:</b> Built-in download manager, screenshot capture, multi-account support</li>"
+        "</ul>"
+    );
+}
+
+QString HelpMenuDialog::getSupportusContent()
+{
+    return QString();
+
+}

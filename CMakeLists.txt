@@ -32,7 +32,6 @@ else()
     include_directories(/usr/include/miniupnpc)
 endif()
 
-# NOTE COPY THE PIECESETS DIRECTORY INSIDE THE FLATPAK
 
 if(FLATPAK_BUILD)
     # ============================================
@@ -135,6 +134,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         upnpmanagerdialog.cpp upnpmanagerdialog.h
         replaydialog.h replaydiaolog.cpp
         sounds.h
+        donationdialog.cpp donationdialog.h helpmenudialog.cpp helpmenudialog.h
 
     )
 # Define target properties for Android with Qt 6 as:
