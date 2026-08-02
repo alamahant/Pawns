@@ -2213,7 +2213,14 @@ void MainWindow::onPieceSetChanged(const QString &setName)
 }
 
 void MainWindow::populatePieceSets() {
-    QDir piecesDir("piecesets/");
+
+#ifdef FLATPAK_BUILD
+    QDir piecesDir(QCoreApplication::applicationDirPath() + "/piecesets");
+#else
+    QDir piecesDir("piecesets");
+#endif
+
+    //QDir piecesDir("piecesets/");
     /*
     if (piecesDir.exists()) {
         QStringList sets = piecesDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
