@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Pawns
+GenericName=Chess Application
+Comment=Play chess against Stockfish, with friends, or watch engines battle
+Icon=io.github.alamahant.Pawns
+Exec=Pawns
+Terminal=false
+Categories=Game;BoardGame;StrategyGame;
+Keywords=chess;stockfish;engine;pgn;fics;board;strategy;
+StartupNotify=true
+X-Flatpak=io.github.alamahant.Pawns

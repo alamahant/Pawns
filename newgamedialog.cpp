@@ -1,6 +1,7 @@
 #include "newgamedialog.h"
 #include"Constants.h"
 #include<QRandomGenerator>
+#include<QTimer>
 
 NewGameDialog::NewGameDialog(QWidget* parent) : QDialog(parent) {
     setWindowTitle("New Game");
@@ -17,7 +18,7 @@ NewGameDialog::NewGameDialog(QWidget* parent) : QDialog(parent) {
     m_p1TypeCombo->addItems({"Human", "Machine"});
 
     connect(m_p1TypeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-               this, &NewGameDialog::onPlayer1TypeChanged);
+            this, &NewGameDialog::onPlayer1TypeChanged);
 
 
     p1Layout->addRow("Type:", m_p1TypeCombo);
@@ -26,7 +27,7 @@ NewGameDialog::NewGameDialog(QWidget* parent) : QDialog(parent) {
     m_p1ColorCombo->addItems({"White", "Black", "Random"});
 
     connect(m_p1ColorCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-                this, &NewGameDialog::onColorChanged);
+            this, &NewGameDialog::onColorChanged);
 
 
 
@@ -61,14 +62,24 @@ NewGameDialog::NewGameDialog(QWidget* parent) : QDialog(parent) {
 
     QVBoxLayout* checkLayout = new QVBoxLayout();
     m_remotePlayCheck = new QCheckBox("Remote Play (P2P)");
+    m_remotePlayCheck->setChecked(false);
     m_remotePlayCheck->setVisible(false);
+
+
+
+
     connect(m_remotePlayCheck, &QCheckBox::toggled, this, [this](bool toggled){
         emit remoteDockVisible(toggled);
     });
+
+
+
+    checkLayout->addWidget(m_remotePlayCheck);
+
     m_ficsCheck = new QCheckBox("FICS (coming soon)");
     m_ficsCheck->setEnabled(false);
-    checkLayout->addWidget(m_remotePlayCheck);
     checkLayout->addWidget(m_ficsCheck);
+
     p2Layout->addRow("Mode:", checkLayout);
 
     mainLayout->addWidget(p2Group);
@@ -99,7 +110,7 @@ NewGameDialog::NewGameDialog(QWidget* parent) : QDialog(parent) {
     timeLayout->addRow(timeControlLayout);
 
     m_ratedCheck = new QCheckBox("Rated");
-    m_ratedCheck->setChecked(true);
+    m_ratedCheck->setChecked(false);
     m_ratedCheck->setVisible(false);
     timeLayout->addRow(m_ratedCheck);
 
@@ -114,6 +125,8 @@ NewGameDialog::NewGameDialog(QWidget* parent) : QDialog(parent) {
     buttonLayout->addWidget(startBtn);
     buttonLayout->addWidget(cancelBtn);
     mainLayout->addLayout(buttonLayout);
+
+
 }
 
 void NewGameDialog::onPlayer1TypeChanged(int index) {
@@ -226,6 +239,11 @@ void NewGameDialog::onColorChanged(int index)
     }
 }
 
+QCheckBox *NewGameDialog::remotePlayCheck() const
+{
+    return m_remotePlayCheck;
+}
+
 QComboBox *NewGameDialog::p1ColorCombo() const
 {
     return m_p1ColorCombo;
@@ -243,6 +261,8 @@ void NewGameDialog::onStartClicked() {
 void NewGameDialog::onClocksEnabled(bool enabled)
 {
     PawnConstants::startDialogClocksEnabled = enabled;
+    emit leftdockvisible(enabled);
 }
+
 
 

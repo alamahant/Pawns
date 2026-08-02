@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component type="desktop-application">
+
+  <id>io.github.alamahant.Pawns</id>
+  <name>Pawns</name>
+  <summary>Local and p2p chess</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+
+  <project_license>GPL-3.0-or-later</project_license>
+  <url type="vcs-browser">https://github.com/alamahant/Pawns</url>
+  <url type="donation">https://ko-fi.com/alamahant</url>
+
+  <description>
+    <p>
+      Pawns is a feature-rich chess application that lets you play against Stockfish engine,
+      challenge friends in local or remote play, create custom positions, and analyze games.
+    </p>
+
+    <p>
+      Game Modes:
+    </p>
+    <ul>
+      <li>Human vs Human - Play with a friend on the same computer</li>
+      <li>Human vs Engine - Challenge Stockfish at adjustable difficulty (0-20)</li>
+      <li>Engine vs Engine (E2E) - Watch two chess engines battle it out</li>
+      <li>Remote Play (P2P) - Play against a friend over the network with SSL encryption</li>
+    </ul>
+
+    <p>
+      Visual Customization:
+    </p>
+    <ul>
+      <li>Multiple piece sets (Celtic, Fantasy, Eyes, Skulls, Spatial, and more)</li>
+      <li>Board color themes (Classic, Wood, Green, Blue, Gray, Brown)</li>
+      <li>Customizable background color behind the board</li>
+      <li>Zoom with Ctrl+Mouse Wheel</li>
+      <li>Toggle board markings (rank and file labels)</li>
+    </ul>
+
+    <p>
+      Time Controls:
+    </p>
+    <ul>
+      <li>Customizable time controls (1-60 minutes)</li>
+      <li>Increment options (0-30 seconds)</li>
+      <li>Visual clock display with progress bars</li>
+      <li>Time-out detection (flag falls)</li>
+      <li>Clock synchronization in remote play</li>
+    </ul>
+
+    <p>
+      Tools:
+    </p>
+    <ul>
+      <li>Scenario Builder - Create and save custom board positions</li>
+      <li>Save and Load games in .chess format (full state with clocks and difficulty)</li>
+      <li>PGN export for sharing games</li>
+      <li>Move history with table view in the dock</li>
+      <li>Game replay with media-style controls</li>
+      <li>Console for engine output and UCI commands</li>
+    </ul>
+
+    <p>
+      Remote Play:
+    </p>
+    <ul>
+      <li>SSL-encrypted P2P connection</li>
+      <li>Contact list with IP/port storage</li>
+      <li>In-game chat</li>
+      <li>UPnP port forwarding support</li>
+      <li>Resign, draw offer, and stop game functionality</li>
+    </ul>
+
+    <p>
+      Engine Support:
+    </p>
+    <ul>
+      <li>Stockfish engine with Skill Level control (0-20)</li>
+      <li>GNU Chess engine support (XBoard mode)</li>
+      <li>Move validation and position analysis</li>
+      <li>Checkmate, stalemate, and draw detection</li>
+    </ul>
+
+    <p>
+      Audio Feedback:
+    </p>
+    <ul>
+      <li>Move sounds</li>
+      <li>Check notification</li>
+      <li>Checkmate sound</li>
+      <li>Toggle sound on/off</li>
+    </ul>
+  </description>
+
+  <url type="homepage">https://github.com/alamahant/Pawns</url>
+  <url type="bugtracker">https://github.com/alamahant/Pawns/issues</url>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>Chess board with pieces</caption>
+      <image>https://raw.githubusercontent.com/alamahant/Pawns/master/screenshots/Main.png</image>
+    </screenshot>
+  </screenshots>
+
+  <releases>
+    <release version="1.0.0" date="2026-08-02">
+      <description>
+        <ul>
+          <li>Initial release</li>
+          <li>Full chess engine integration with Stockfish</li>
+          <li>Remote play with SSL encryption</li>
+          <li>Scenario Builder for custom positions</li>
+          <li>PGN export and replay</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+
+  <developer_name>Alamahant</developer_name>
+
+  <categories>
+    <category>Game</category>
+    <category>BoardGame</category>
+    <category>StrategyGame</category>
+  </categories>
+
+  <keywords>
+    <keyword>chess</keyword>
+    <keyword>stockfish</keyword>
+    <keyword>engine</keyword>
+    <keyword>pgn</keyword>
+    <keyword>fics</keyword>
+    <keyword>board</keyword>
+    <keyword>strategy</keyword>
+    <keyword>game</keyword>
+    <keyword>analysis</keyword>
+    <keyword>replay</keyword>
+  </keywords>
+
+  <content_rating type="oars-1.1">
+    <content_attribute id="social-chat">intense</content_attribute>
+  </content_rating>
+
+  <launchable type="desktop-id">io.github.alamahant.Pawns.desktop</launchable>
+
+  <provides>
+    <binary>Pawns</binary>
+  </provides>
+
+  <requires>
+    <display_length compare="ge">768</display_length>
+  </requires>
+
+  <recommends>
+    <control>keyboard</control>
+    <control>pointing</control>
+  </recommends>
+
+</component>

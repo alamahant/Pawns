@@ -24,7 +24,9 @@ public:
     void setStockfishEngine(StockfishEngine* engine);
     QString getCurrentFen() const;
     bool makeMove(const QString& from, const QString& to);
-    void applyEngineMove(const QString& move);
+    //void applyEngineMove(const QString& move);
+    bool applyEngineMove(const QString& move);
+
     ChessPiece* getSelectedPiece() const { return selectedPiece; }
     void setSelectedPiece(ChessPiece* piece) { selectedPiece = piece; }
     bool isWhiteTurn;
@@ -56,7 +58,7 @@ public:
 
 
 public slots:
-void showPromotionDialog(ChessPiece::PieceColor color, const QString& square);
+    void showPromotionDialog(ChessPiece::PieceColor color, const QString& square);
 
 
 signals:

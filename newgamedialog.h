@@ -34,12 +34,15 @@ public:
     void resetDialog();
     QComboBox *p1ColorCombo() const;
 
+    QCheckBox *remotePlayCheck() const;
+
 protected:
     void reject() override;
     void closeEvent(QCloseEvent* event) override;
 signals:
     void difficultyChanged(int level);
     void remoteDockVisible(bool toggled);
+    void leftdockvisible(bool enabled);
 
 private slots:
     void onPlayer1TypeChanged(int index);

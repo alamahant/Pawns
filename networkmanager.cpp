@@ -7,9 +7,20 @@
 #include <QProcess>
 #include <QHostAddress>
 #include<QMessageBox>
+#include"Constants.h"
 
 void CustomSslServer::incomingConnection(qintptr socketDescriptor)
 {
+
+    // ===== CHECK BEFORE CREATING SSL SOCKET =====
+    if (m_manager && m_manager->isConnected()) {
+        qDebug() << "⚠️ Already connected - rejecting";
+        QTcpSocket tempSocket;
+        tempSocket.setSocketDescriptor(socketDescriptor);
+        tempSocket.disconnectFromHost();
+        return;
+    }
+
     QSslSocket* sslSocket = new QSslSocket(this);
     sslSocket->setSocketDescriptor(socketDescriptor);
 
@@ -41,20 +52,20 @@ NetworkManager::~NetworkManager()
     m_keepaliveTimer->stop();
 
     if(m_clientSocket){
-    disconnectFromPeer();
-    stopListening();
+        disconnectFromPeer();
+        stopListening();
     }
 }
 
 QString NetworkManager::getCertPath() const
 {
-    QString appDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QString appDir = PawnConstants::APPDIR;
     return appDir + "/pawns.crt";
 }
 
 QString NetworkManager::getKeyPath() const
 {
-    QString appDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QString appDir = PawnConstants::APPDIR;
     return appDir + "/pawns.key";
 }
 
@@ -62,8 +73,8 @@ QString NetworkManager::getKeyPath() const
 
 void NetworkManager::generateCertificate()
 {
-    QString appDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    QDir().mkpath(appDir);
+    QString appDir = PawnConstants::APPDIR;
+    // QDir().mkpath(appDir);
 
     QString certPath = getCertPath();
     QString keyPath = getKeyPath();
@@ -215,7 +226,7 @@ void NetworkManager::sendMessage(const QJsonObject& message)
     QSslSocket* socket = nullptr;
 
     if (m_clientSocket && m_clientSocket->isEncrypted() &&
-        m_clientSocket->state() == QAbstractSocket::ConnectedState) {
+            m_clientSocket->state() == QAbstractSocket::ConnectedState) {
         socket = m_clientSocket;
     } else if (m_serverSocket && m_serverSocket->isEncrypted() &&
                m_serverSocket->state() == QAbstractSocket::ConnectedState) {

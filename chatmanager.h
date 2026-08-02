@@ -35,7 +35,10 @@ signals:
     void connectedToPeer();
     void gameStoppedByPeer();
     void peerDisconnected();
-
+    void peerResigned();
+    void drawOfferReceived();
+    void drawResponseReceived(bool accepted);
+    void clockSettingsReceived(bool enabled, int minutes, int increment);
 private:
     void handleConnectionRequest(const QJsonObject& message);
     void handleConnectionResponse(const QJsonObject& message);
@@ -46,6 +49,7 @@ private:
     void handleGameStart(const QJsonObject& message);
     void handleMove(const QJsonObject& message);
     void handleFEN(const QJsonObject& message);
+    void handlePeerResigned(const QJsonObject& message);
 
     NetworkManager* networkManager;
     QString myName;
@@ -63,7 +67,7 @@ public slots:
     void onMessageReceived(const QJsonObject& message);
     void onError(const QString& errorMessage);
     void onConnectionRequestReceived(const QString& peerAddress);
-
+    void handleClockSettings(const QJsonObject& message);
 };
 
 #endif // CHATMANAGER_H

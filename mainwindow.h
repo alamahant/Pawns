@@ -127,8 +127,8 @@ private:
     QPushButton* listenBtn;
     QPushButton* connectBtn;
     QPushButton* startGameBtn;
-    QPushButton* stopGameBtn;
-    QPushButton* resignBtn;
+    QPushButton* stopLocalGameButton;
+    QPushButton* resignRemoteButton;
     QPushButton* addContactBtn;
     QPushButton* editContactBtn;
     QPushButton* deleteContactBtn;
@@ -143,12 +143,12 @@ private slots:
     void onConnect();
     void onStartRemoteGame();
     void onStopRemoteGame();
-    void onResignGame();
     void onAddContact();
     void onEditContact();
     void onDeleteContact();
     void onSendChatMessage();
     void onContactSelected(QListWidgetItem* item);
+    void onPeerResigned();
 
     // ChatManager signal slots
     void onConnectionRequestReceived(const QString& sender);
@@ -229,8 +229,8 @@ private:
     int m_clockMinutes = 10;
     int m_clockIncrement = 0;
     bool m_clocksEnabled = false;
-    QPushButton* stopGameButton;
-    QPushButton* resignButton;
+    QPushButton* stopRemoteGameButton;
+    QPushButton* resignLocalButton;
     QPushButton* drawButton;
 private slots:
     void updateClocks();
@@ -239,7 +239,6 @@ private slots:
     void resetClocks();
     void updateClockColor(QProgressBar* bar, int timeLeft);
     QString formatTime(int seconds);
-    void onStopGame();
     void onResign();
     void onDrawOffer();
 public slots:
@@ -263,14 +262,17 @@ private slots:
     void saveHistory();
     void openFolder();
     void createPawnsSymlink();
+    void onClockSettingsReceived(bool enabled, int minutes, int increment);
 
 private:
     QString generatePGN();
     QString convertToPGN(const QString& moveText);
     ReplayDialog* replayDialog = nullptr;
     QStringList getMoveHistoryFromTable();
-   void playSound(enum SOUNDTYPE soundtype);
-   StockfishEngine* createNewEngine();
-
+    void playSound(enum SOUNDTYPE soundtype);
+    StockfishEngine* createNewEngine();
+    void updateButtons(bool gameIsRunning);
+    QAction* highlightMoveAction;
+    bool shouldHighlightMoves = true;
 };
 #endif // MAINWINDOW_H

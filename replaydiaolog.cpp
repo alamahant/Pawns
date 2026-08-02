@@ -65,18 +65,39 @@ void ReplayDialog::setupUI()
 
     QString btnStyle = "QPushButton { font-size: 18px; padding: 5px 12px; }";
 
-    QPushButton* firstBtn = new QPushButton("◄◄", this);
-    QPushButton* prevBtn = new QPushButton("◄", this);
-    m_playBtn = new QPushButton("▶", this);
-    m_stopBtn = new QPushButton("■", this);
-    m_stopBtn->setEnabled(false);
-    QPushButton* nextBtn = new QPushButton("►", this);
-    QPushButton* lastBtn = new QPushButton("►►", this);
-    QPushButton* loadBtn = new QPushButton("📂 Load", this);
-    QPushButton* currentBtn = new QPushButton("📋 Current", this);
-    QPushButton* closeBtn = new QPushButton("✕", this);
+    QPushButton* firstBtn = new QPushButton(this);
+    firstBtn->setIcon(QIcon(":/icons/rewind.svg"));
 
-    QPushButton* resetBtn = new QPushButton("⟳", this);
+    QPushButton* prevBtn = new QPushButton(this);
+    prevBtn->setIcon(QIcon(":/icons/skip-back.svg"));
+
+    m_playBtn = new QPushButton(this);
+    m_playBtn->setIcon(QIcon(":/icons/play.svg"));
+    m_stopBtn = new QPushButton(this);
+    m_stopBtn->setIcon(QIcon(":/icons/square.svg"));
+
+    m_stopBtn->setEnabled(false);
+    QPushButton* nextBtn = new QPushButton(this);
+    nextBtn->setIcon(QIcon(":/icons/skip-forward.svg"));
+
+    QPushButton* lastBtn = new QPushButton(this);
+    lastBtn->setIcon(QIcon(":/icons/fast-forward.svg"));
+
+    QPushButton* loadBtn = new QPushButton(this);
+    loadBtn->setIcon(QIcon(":/icons/folder.svg"));
+    loadBtn->setToolTip("Load saved history");
+
+    QPushButton* currentBtn = new QPushButton(this);
+    currentBtn->setIcon(QIcon(":/icons/hash.svg"));
+    currentBtn->setToolTip("Load current history");
+
+    QPushButton* closeBtn = new QPushButton(this);
+    closeBtn->setIcon(QIcon(":/icons/x.svg"));
+    closeBtn->setToolTip("Close replay window");
+
+    QPushButton* resetBtn = new QPushButton(this);
+    resetBtn->setIcon(QIcon(":/icons/refresh-cw.svg"));
+
     resetBtn->setToolTip("Reset board to start");
 
 
@@ -135,7 +156,6 @@ void ReplayDialog::loadMoves(const QStringList& moves)
     m_currentIndex = 0;
     m_isPlaying = false;
     m_timer->stop();
-    m_playBtn->setText("▶");
     m_stopBtn->setEnabled(false);
 
     // Reset board to starting position
@@ -209,7 +229,8 @@ void ReplayDialog::onPlay()
         // Pause
         m_isPlaying = false;
         m_timer->stop();
-        m_playBtn->setText("▶");
+        m_playBtn->setIcon(QIcon(":/icons/play.svg"));
+        m_stopBtn->setEnabled(true);
     } else {
         // Play
         if (m_moves.isEmpty()) {
@@ -218,11 +239,14 @@ void ReplayDialog::onPlay()
         }
 
         if (m_currentIndex >= m_totalMoves) {
-            updateBoard(0);
+            updateBoard(-1);
         }
 
         m_isPlaying = true;
-        m_playBtn->setText("⏸");
+        //m_playBtn->setText("⏸");
+        m_playBtn->setIcon(QIcon(":/icons/pause.svg"));
+        m_stopBtn->setEnabled(true);
+
         m_timer->start(1500);
     }
 }
@@ -232,7 +256,9 @@ void ReplayDialog::onStop()
     m_isPlaying = false;
     m_timer->stop();
     m_playBtn->setEnabled(true);
+    m_playBtn->setIcon(QIcon(":/icons/play.svg"));
     m_stopBtn->setEnabled(false);
+    updateBoard(-1);
 }
 
 void ReplayDialog::onPrevious()
@@ -254,7 +280,7 @@ void ReplayDialog::onNext()
 void ReplayDialog::onFirst()
 {
     if (m_isPlaying) return;
-    updateBoard(0);
+    updateBoard(-1);
 }
 
 void ReplayDialog::onLast()
@@ -268,7 +294,12 @@ void ReplayDialog::onTimerTimeout()
     if (m_currentIndex < m_totalMoves) {
         updateBoard(m_currentIndex + 1);
     } else {
-        onStop();
+        m_isPlaying = false;
+        m_timer->stop();
+        m_playBtn->setEnabled(true);
+        m_playBtn->setIcon(QIcon(":/icons/play.svg"));
+        m_stopBtn->setEnabled(false);
+
         emit playSound(SOUNDTYPE::SOUND_CHECKMATE);
     }
 }
@@ -276,13 +307,13 @@ void ReplayDialog::onTimerTimeout()
 void ReplayDialog::onLoadHistory()
 {
 
-    resetBoard();
+    //resetBoard();
     QString fileName = QFileDialog::getOpenFileName(
-        this,
-        "Load Game History",
-        PawnConstants::saveHistoryDirPath,
-        "History Files (*.txt);;All Files (*)"
-    );
+                this,
+                "Load Game History",
+                PawnConstants::saveHistoryDirPath,
+                "History Files (*.txt);;All Files (*)"
+                );
 
     if (fileName.isEmpty()) return;
 
@@ -330,7 +361,6 @@ void ReplayDialog::resetBoard()
 {
     m_isPlaying = false;
     m_timer->stop();
-    m_playBtn->setText("▶");
     m_currentIndex = 0;
     m_board->setupPosition("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     setMoveInfo();

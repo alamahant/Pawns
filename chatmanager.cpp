@@ -13,7 +13,7 @@ void ChatManager::onMessageReceived(const QJsonObject& message)
 {
     QString type = message["type"].toString();
     if (type == "keepalive") {
-            return;
+        return;
     } else if (type == "connect_request") {
         handleConnectionRequest(message);
     } else if (type == "connect_response") {
@@ -32,11 +32,19 @@ void ChatManager::onMessageReceived(const QJsonObject& message)
         handleStopGame(message);
     }  else if (type == "peer_disconnect") {
         handlePeerDisconnect(message);
-
+    }  else if (type == "resign") {
+        handlePeerResigned(message);
     } else if (type == "move") {
         handleMove(message);
     } else if (type == "fen") {
         handleFEN(message);
+    } else if (type == "draw_offer") {
+        emit drawOfferReceived();
+    } else if (type == "draw_response") {
+        bool accepted = message["accepted"].toBool();
+        emit drawResponseReceived(accepted);
+    }    else if (type == "clock_settings") {
+        handleClockSettings(message);
     }
 }
 
@@ -158,6 +166,11 @@ void ChatManager::handleFEN(const QJsonObject& message)
     emit fenReceived(fen);
 }
 
+void ChatManager::handlePeerResigned(const QJsonObject &message)
+{
+    emit peerResigned();
+}
+
 
 void ChatManager::sendConnectionResponse(bool accept)
 {
@@ -206,4 +219,12 @@ void ChatManager::handleStopGame(const QJsonObject& message)
 void ChatManager::handlePeerDisconnect(const QJsonObject& message)
 {
     emit peerDisconnected();
+}
+
+void ChatManager::handleClockSettings(const QJsonObject& message)
+{
+    bool enabled = message["enabled"].toBool();
+    int minutes = message["minutes"].toInt();
+    int increment = message["increment"].toInt();
+    emit clockSettingsReceived(enabled, minutes, increment);
 }

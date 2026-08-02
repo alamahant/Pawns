@@ -23,13 +23,93 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network Multimedia)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network Multimedia)
 
 if(FLATPAK_BUILD)
-    include_directories(/app/usr/include/miniupnpc)
-    link_directories(/app/usr/lib)
-    set(CMAKE_INSTALL_RPATH "/app/usr/lib")
+    # Correct Flatpak paths for miniupnpc
+    include_directories(/app/include/miniupnpc)
+    link_directories(/app/lib)
+    set(CMAKE_INSTALL_RPATH "/app/lib")
     set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
 else()
     include_directories(/usr/include/miniupnpc)
 endif()
+
+# NOTE COPY THE PIECESETS DIRECTORY INSIDE THE FLATPAK
+
+if(FLATPAK_BUILD)
+    # ============================================
+      # 1. MINIUPNPC
+      # ============================================
+      set(MINIUPNPC_SOURCE_DIR "${CMAKE_SOURCE_DIR}/miniupnpc_src")
+
+      if(EXISTS "${MINIUPNPC_SOURCE_DIR}/Makefile")
+          message(STATUS "Building miniupnpc...")
+
+          # Build
+          execute_process(
+              COMMAND make -j${CMAKE_SYSTEM_PROCESSOR_COUNT}
+              WORKING_DIRECTORY ${MINIUPNPC_SOURCE_DIR}
+              RESULT_VARIABLE MINIUPNPC_MAKE_RESULT
+          )
+
+          if(MINIUPNPC_MAKE_RESULT)
+              message(FATAL_ERROR "miniupnpc build failed")
+          endif()
+
+          # Install
+          execute_process(
+              COMMAND make install PREFIX=/app
+              WORKING_DIRECTORY ${MINIUPNPC_SOURCE_DIR}
+              RESULT_VARIABLE MINIUPNPC_INSTALL_RESULT
+          )
+
+          if(MINIUPNPC_INSTALL_RESULT)
+              message(FATAL_ERROR "miniupnpc install failed")
+          endif()
+      endif()
+
+      # ============================================
+      # 2. STOCKFISH
+      # ============================================
+      set(STOCKFISH_SOURCE_DIR "${CMAKE_SOURCE_DIR}/stockfish_src/src")
+
+      if(EXISTS "${STOCKFISH_SOURCE_DIR}/Makefile")
+          message(STATUS "Building Stockfish...")
+
+          # Detect architecture
+          if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
+              set(STOCKFISH_ARCH "x86-64")
+          elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
+              set(STOCKFISH_ARCH "armv8")
+          else()
+              set(STOCKFISH_ARCH "x86-64")
+          endif()
+
+          message(STATUS "Stockfish ARCH: ${STOCKFISH_ARCH}")
+
+          # Build
+          execute_process(
+              COMMAND make -j${CMAKE_SYSTEM_PROCESSOR_COUNT} build ARCH=${STOCKFISH_ARCH}
+              WORKING_DIRECTORY ${STOCKFISH_SOURCE_DIR}
+              RESULT_VARIABLE STOCKFISH_MAKE_RESULT
+          )
+
+          if(STOCKFISH_MAKE_RESULT)
+              message(FATAL_ERROR "Stockfish build failed")
+          endif()
+
+          # Install
+          execute_process(
+              COMMAND make install BINDIR=${CMAKE_INSTALL_PREFIX}/bin
+              WORKING_DIRECTORY ${STOCKFISH_SOURCE_DIR}
+              RESULT_VARIABLE STOCKFISH_INSTALL_RESULT
+          )
+
+          if(STOCKFISH_INSTALL_RESULT)
+              message(FATAL_ERROR "Stockfish install failed")
+          endif()
+      endif()
+
+endif()
+
 
 set(PROJECT_SOURCES
         main.cpp
@@ -109,6 +189,41 @@ install(TARGETS Pawns
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+if(FLATPAK_BUILD)
+    # Install desktop file
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/io.github.alamahant.Pawns.desktop"
+            DESTINATION "share/applications")
+
+    # Install metainfo file
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/io.github.alamahant.Pawns.metainfo.xml"
+            DESTINATION "share/metainfo")
+
+    # Install app icon from root directory
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/io.github.alamahant.Pawns.png"
+            DESTINATION "share/icons/hicolor/512x512/apps"
+            RENAME "io.github.alamahant.Pawns.png")
+
+    # Install icons from favicon directory
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/favicon/android-chrome-192x192.png"
+            DESTINATION "share/icons/hicolor/192x192/apps"
+            RENAME "io.github.alamahant.Pawns.png")
+
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/favicon/favicon-16x16.png"
+            DESTINATION "share/icons/hicolor/16x16/apps"
+            RENAME "io.github.alamahant.Pawns.png")
+
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/favicon/favicon-32x32.png"
+            DESTINATION "share/icons/hicolor/32x32/apps"
+            RENAME "io.github.alamahant.Pawns.png")
+
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/favicon/apple-touch-icon.png"
+            DESTINATION "share/icons/hicolor/180x180/apps"
+            RENAME "io.github.alamahant.Pawns.png")
+
+        install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/piecesets"
+                DESTINATION "share/piecesets")
+endif()
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(Pawns)

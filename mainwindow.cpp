@@ -37,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent)
     , replayDialog(new ReplayDialog(this))
 {
     ui->setupUi(this);
-
+    setWindowIcon(QIcon(":/io.github.alamahant.Pawns.png"));
     m_soundPlayer->setAudioOutput(m_audioOutput);
     m_audioOutput->setVolume(0.5);
     QSettings settings;
@@ -82,6 +82,9 @@ MainWindow::MainWindow(QWidget *parent)
     playSounds = settings.value("playsounds", true).toBool();
     playSoundAction->setChecked(playSounds);
 
+    shouldHighlightMoves = settings.value("highlightmoves", true).toBool();
+    highlightMoveAction->setChecked(shouldHighlightMoves);
+
     setDifficulty(0);
 
     setWindowTitle("Pawns");
@@ -98,24 +101,57 @@ MainWindow::MainWindow(QWidget *parent)
         difficultySelect->setCurrentIndex(level);
     });
 
+
     connect(newGameDialog, &NewGameDialog::remoteDockVisible, this, [this](bool visible){
         if(visible){
+
+            /*
+            QTimer::singleShot(100, this, [this](){
+                QMessageBox::information(
+                    this,
+                    "Remote Play",
+                    "Remote Play mode activated.\n\n"
+                    "Please use the Start Game button in the Remote Play dock\n"
+                    "to begin your game with the connected peer."
+                );
+            });
+            */
+
             if(isleftdockvisible){
-            resize(PawnConstants::bothDocksOpen);
+                resize(PawnConstants::bothDocksOpen);
             }else if(!isleftdockvisible){
                 resize(PawnConstants::oneDockOpen);
             }
+
         }else{
             resize(PawnConstants::startingSize);
         }
         remoteDock->setVisible(visible);
         isremotedockvisible = visible;
+
     });
+
+    connect(newGameDialog, &NewGameDialog::leftdockvisible,this, [this](bool visible){
+        if(visible){
+            if(isremotedockvisible){
+                resize(PawnConstants::bothDocksOpen);
+            }else if(!isremotedockvisible){
+                resize(PawnConstants::oneDockOpen);
+            }
+        }else{
+            resize(PawnConstants::startingSize);
+        }
+        gameInfoDock->setVisible(visible);
+        isleftdockvisible = visible;
+    });
+
+
+
     onShowStarDialog();
 
     connect(engine, &StockfishEngine::engineOutput, this, [this](const QString& line){
-            consoleEdit->append(line);
-            consoleEdit->ensureCursorVisible();
+        consoleEdit->append(line);
+        consoleEdit->ensureCursorVisible();
     });
 
 
@@ -127,9 +163,9 @@ MainWindow::MainWindow(QWidget *parent)
         QStringList currentHistory = getMoveHistoryFromTable();
 
         if (currentHistory.isEmpty()) {
-                QMessageBox::information(this, "Replay", "No moves in current game.");
-                return;
-            }
+            QMessageBox::information(this, "Replay", "No moves in current game.");
+            return;
+        }
 
         QStringList moves;
 
@@ -277,33 +313,41 @@ void MainWindow::createMenus() {
     QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
 
     QAction *openFolderAction = fileMenu->addAction("&Open Data Directory");
-        connect(openFolderAction, &QAction::triggered, this, &MainWindow::openFolder);
-        fileMenu->addSeparator();
+    openFolderAction->setShortcut(QKeySequence("Ctrl+D"));
+    connect(openFolderAction, &QAction::triggered, this, &MainWindow::openFolder);
+    fileMenu->addSeparator();
 
-        fileMenu->addSeparator();
-        QAction *createSymlinkAction = fileMenu->addAction("Create Shortcut to Pawns Data");
-        connect(createSymlinkAction, &QAction::triggered, this, &MainWindow::createPawnsSymlink);
-        fileMenu->addSeparator();
+    fileMenu->addSeparator();
+    QAction *createSymlinkAction = fileMenu->addAction("Create Shortcut to Pawns Data");
+    connect(createSymlinkAction, &QAction::triggered, this, &MainWindow::createPawnsSymlink);
+    fileMenu->addSeparator();
 
-        QAction *exitAction = fileMenu->addAction("E&xit");
-        connect(exitAction, &QAction::triggered, this, &QWidget::close);
+    QAction *exitAction = fileMenu->addAction("E&xit");
+    exitAction->setShortcut(QKeySequence::Quit);
+    connect(exitAction, &QAction::triggered, this, &QWidget::close);
 
     QMenu* gameMenu = menuBar()->addMenu(tr("&Game"));
+
     QAction* newGameAct = new QAction(tr("&New Game"), this);
+    newGameAct->setShortcut(QKeySequence::New);
     connect(newGameAct, &QAction::triggered, this, &MainWindow::onShowStarDialog);
     gameMenu->addAction(newGameAct);
 
     QAction* saveGameAct = new QAction(tr("&Save Game"), this);
+    saveGameAct->setShortcut(QKeySequence::Save);
     connect(saveGameAct, &QAction::triggered, this, &MainWindow::saveGame);
 
     QAction* loadGameAct = new QAction(tr("&Load Game"), this);
+    loadGameAct->setShortcut(QKeySequence::Open);
     connect(loadGameAct, &QAction::triggered, this, &MainWindow::loadGame);
 
     gameMenu->addAction(saveGameAct);
     gameMenu->addAction(loadGameAct);
 
     QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
+
     viewRemoteDockAct = new QAction(tr("&Show Remote Dock"), this);
+    viewRemoteDockAct->setShortcut(QKeySequence("Ctrl+Shift+P"));
     viewRemoteDockAct->setCheckable(true);
     viewRemoteDockAct->setChecked(false);
     connect(viewRemoteDockAct, &QAction::toggled, this, [this](bool toggled){
@@ -311,7 +355,7 @@ void MainWindow::createMenus() {
         settings.setValue("remoteDockVisible", toggled);
         if(toggled){
             if(isleftdockvisible){
-            resize(PawnConstants::bothDocksOpen);
+                resize(PawnConstants::bothDocksOpen);
             }else if(!isleftdockvisible){
                 resize(PawnConstants::oneDockOpen);
             }
@@ -326,6 +370,7 @@ void MainWindow::createMenus() {
     viewMenu->addSeparator();
 
     viewLeftDockAct = new QAction(tr("&Show Left Dock"), this);
+    viewLeftDockAct->setShortcut(QKeySequence("Ctrl+Shift+L"));
     viewLeftDockAct->setCheckable(true);
     viewLeftDockAct->setChecked(false);
     connect(viewLeftDockAct, &QAction::toggled, this, [this](bool toggled){
@@ -333,7 +378,7 @@ void MainWindow::createMenus() {
         settings.setValue("leftDockVisible", toggled);
         if(toggled){
             if(isremotedockvisible){
-            resize(PawnConstants::bothDocksOpen);
+                resize(PawnConstants::bothDocksOpen);
             }else if(!isremotedockvisible){
                 resize(PawnConstants::oneDockOpen);
             }
@@ -351,6 +396,7 @@ void MainWindow::createMenus() {
     viewMenu->addAction(setBackgroundColorAction);
 
     showBackgroundColorAction = new QAction("&Show Background Color", this);
+    showBackgroundColorAction->setShortcut(QKeySequence("Ctrl+Shift+C"));
     showBackgroundColorAction->setCheckable(true);
     showBackgroundColorAction->setChecked(false);
     connect(showBackgroundColorAction, &QAction::toggled, this, [this](bool toggled){
@@ -361,13 +407,14 @@ void MainWindow::createMenus() {
             view->setBackgroundBrush(QBrush(backgroundColor));
 
         }else{
-           if(view) view->setBackgroundBrush(QBrush());
+            if(view) view->setBackgroundBrush(QBrush());
         }
     });
     viewMenu->addAction(showBackgroundColorAction);
 
     viewMenu->addSeparator();
     showBoardMarkingsAction = new QAction("&Show Board Markings", this);
+    showBoardMarkingsAction->setShortcut(QKeySequence("Ctrl+M"));
     showBoardMarkingsAction->setCheckable(true);
 
     connect(showBoardMarkingsAction, &QAction::toggled, this, [this](bool toggled){
@@ -376,12 +423,12 @@ void MainWindow::createMenus() {
         settings.setValue("showboardmarkings",toggled);
         if(toggled){
             if (board) {
-                    board->redrawMarkings();  // ← Live update
-                }
+                board->redrawMarkings();  // ← Live update
+            }
         }else {
             if (board) {
-                    board->clearMarkings();  // ← Live update
-                }
+                board->clearMarkings();  // ← Live update
+            }
         }
     });
     viewMenu->addAction(showBoardMarkingsAction);
@@ -397,13 +444,26 @@ void MainWindow::createMenus() {
     QAction* zoomAction = new QAction("&Zoom (Ctrl + Mousewheel)", this);
     //viewMenu->addAction(zoomAction);
 
+    viewMenu->addSeparator();
+    highlightMoveAction = new QAction("Highlight Moves");
+    highlightMoveAction->setCheckable(true);
+    highlightMoveAction->setChecked(true);
+    connect(highlightMoveAction, &QAction::toggled, this, [this](bool toggled){
+        QSettings settings;
+        settings.setValue("highlightmoves", toggled);
+        shouldHighlightMoves = toggled;
+    });
+    viewMenu->addAction(highlightMoveAction);
+
     QMenu* toolsMenu = menuBar()->addMenu(tr("&Tools"));
     showFENAction = new QAction("Show Current FEN", this);
+    showFENAction->setShortcut(QKeySequence("Ctrl+F"));
     connect(showFENAction, &QAction::triggered, this, &MainWindow::dumpFen);
     toolsMenu->addAction(showFENAction);
 
     toolsMenu->addSeparator();
     QAction* builderAction = new QAction("Scenario Builder", this);
+    builderAction->setShortcut(QKeySequence("Ctrl+Shift+B"));
     connect(builderAction, &QAction::triggered, this, [this]{
         if(scenarioBuilder){
 
@@ -437,18 +497,21 @@ void MainWindow::createMenus() {
 
     toolsMenu->addSeparator();
     QAction* saveHistoryAct = new QAction(tr("&Save History"), this);
+    saveHistoryAct->setShortcut(QKeySequence("Ctrl+Shift+H"));
     connect(saveHistoryAct, &QAction::triggered, this, &MainWindow::saveHistory);
     toolsMenu->addAction(saveHistoryAct);
 
 
     toolsMenu->addSeparator();
     QAction* replayAct = new QAction(tr("&Replay Game"), this);
+    replayAct->setShortcut(QKeySequence("Ctrl+Shift+R"));
     connect(replayAct, &QAction::triggered, this, &MainWindow::onReplayGame);
     toolsMenu->addAction(replayAct);
 
     QMenu* settingsMenu = menuBar()->addMenu(tr("&Settings"));
 
     playSoundAction = new QAction("&Play Audio", this);
+    playSoundAction->setShortcut(QKeySequence("Ctrl+Shift+A"));
     playSoundAction->setCheckable(true);
     playSoundAction->setChecked(true);
     connect(playSoundAction, &QAction::toggled, this, [this](bool toggled){
@@ -461,21 +524,21 @@ void MainWindow::createMenus() {
     QAction* resetSettingsAction = new QAction("&Reset Settings", this);
     connect(resetSettingsAction, &QAction::triggered, this, [this](){
         QMessageBox::StandardButton reply = QMessageBox::question(
-            this,
-            "Reset Settings",
-            "Are you sure you want to reset all settings?\n\n"
-            "This will delete all saved preferences and restart the application.",
-            QMessageBox::Yes | QMessageBox::No
-        );
+                    this,
+                    "Reset Settings",
+                    "Are you sure you want to reset all settings?\n\n"
+                    "This will delete all saved preferences and restart the application.",
+                    QMessageBox::Yes | QMessageBox::No
+                    );
 
         if (reply == QMessageBox::Yes) {
             QSettings settings;
             settings.clear();
 
             QMessageBox::information(this, "Settings Reset",
-                "Settings have been reset.\n\n"
-                "The application will now restart.",
-                QMessageBox::Ok);
+                                     "Settings have been reset.\n\n"
+                                     "The application will now restart.",
+                                     QMessageBox::Ok);
 
             // Restart application
             qApp->quit();
@@ -492,20 +555,20 @@ void MainWindow::createMenus() {
     cornerLayout->setContentsMargins(0, 0, 5, 0);
     cornerLayout->setSpacing(5);
 
-    stopGameBtn = new QPushButton("Stop", this);
+    stopLocalGameButton = new QPushButton("Stop", this);
 
-    //stopGameBtn->setStyleSheet("QPushButton { color: red; font-weight: bold; font-size: 14px; }");
-    stopGameBtn->setIcon(QIcon(":/icons/alert-triangle.svg"));
+    //stopLocalGameButton->setStyleSheet("QPushButton { color: red; font-weight: bold; font-size: 14px; }");
+    stopLocalGameButton->setIcon(QIcon(":/icons/alert-triangle.svg"));
 
-    //stopGameBtn->setFixedWidth(40);
-    stopGameBtn->setToolTip("Stop Game");
-    connect(stopGameBtn, &QPushButton::clicked, this, &MainWindow::onStopGame);
+    //stopLocalGameButton->setFixedWidth(40);
+    stopLocalGameButton->setToolTip("Stop Game");
+    connect(stopLocalGameButton, &QPushButton::clicked, this, &MainWindow::onStopRemoteGame);
 
-    resignButton = new QPushButton("Resign", this);
-    resignButton->setIcon(QIcon(":/icons/twitter.svg"));
-    //resignButton->setFixedWidth(40);
-    resignButton->setToolTip("Resign");
-    connect(resignButton, &QPushButton::clicked, this, &MainWindow::onResignGame);
+    resignLocalButton = new QPushButton("Resign", this);
+    resignLocalButton->setIcon(QIcon(":/icons/twitter.svg"));
+    //resignLocalButton->setFixedWidth(40);
+    resignLocalButton->setToolTip("Resign");
+    connect(resignLocalButton, &QPushButton::clicked, this, &MainWindow::onResign);
 
     drawButton = new QPushButton("Draw", this);
     drawButton->setIcon(QIcon(":/icons/flag.svg"));
@@ -514,8 +577,8 @@ void MainWindow::createMenus() {
     drawButton->setToolTip("Offer Draw");
     connect(drawButton, &QPushButton::clicked, this, &MainWindow::onDrawOffer);
 
-    cornerLayout->addWidget(stopGameBtn);
-    cornerLayout->addWidget(resignButton);
+    cornerLayout->addWidget(stopLocalGameButton);
+    cornerLayout->addWidget(resignLocalButton);
     cornerLayout->addWidget(drawButton);
     cornerLayout->addSpacing(5);
     QLabel* levelLabel = new QLabel("Level:", this);
@@ -573,58 +636,6 @@ void MainWindow::setupChessBoard() {
     view->centerOn(0, 0);
 }
 
-/*
-void MainWindow::newGame() {
-
-
-    bool newIsWhite = PawnConstants::startDialogPlayer1IsWhite;
-
-    if (board) {
-        board->setPlayerColor(newIsWhite);
-    }
-
-    colorToggle->setText(newIsWhite ? "Play as White" : "Play as Black");
-    colorToggle->setEnabled(true);
-    setDifficulty(difficultySelect->currentIndex());
-
-    if (board) {
-        delete board;
-        board = nullptr;
-    }
-
-    setupChessBoard();
-    updateCapturedDisplay();
-
-    moveTable->setRowCount(0);
-    moveCount = 0;
-
-    if (PawnConstants::startDialogClocksEnabled) {
-        int minutes = newGameDialog->minutes();
-        int increment = newGameDialog->increment();
-        startClocks(minutes, increment);
-    } else {
-        stopClocks();
-        resetClocks();
-    }
-
-    if (board) {
-        board->setPlayerColor(newIsWhite);
-        board->setBoardFlipped(!newIsWhite);
-        colorToggle->setText(newIsWhite ? "Play as White" : "Play as Black");
-        board->generateFen();  // ← Force engine update
-    }
-    board->setGameOver(false);
-    gameStatus->setText(newIsWhite ? "White to move" : "Black to move");
-
-    if (PawnConstants::isE2EPlay) {
-        QTimer::singleShot(500, this, &MainWindow::makeEngineMove);
-    }
-    if(!PawnConstants::startDialogPlayer1IsMachine && PawnConstants::startDialogPlayer2IsMachine && ! PawnConstants::startDialogPlayer1IsWhite){
-        makeEngineMove();
-    }
-
-}
-*/
 
 
 void MainWindow::newGame() {
@@ -725,7 +736,7 @@ void MainWindow::handleConfirmMove()
         QString toPos = selectedPiece->getPosition();
 
         if (board->makeMove(fromPos, toPos)) {
-            board->highlightMove(fromPos, toPos);
+            if(shouldHighlightMoves) board->highlightMove(fromPos, toPos);
             updateMoveHistory(board->getLastFormattedMove());
             updateCapturedDisplay();
 
@@ -777,14 +788,20 @@ void MainWindow::makeEngineMove() {
 
     QString bestMove = engine->getBestMove(1000); // 1 second think time
 
-    if (!bestMove.isEmpty() && bestMove != "none" && bestMove.length() >= 4) {
+    if (!bestMove.isEmpty() && bestMove != "none" && (bestMove.length() == 4 || bestMove.length() == 5)) {
 
 
         QString fromPos = bestMove.mid(0, 2);
         QString toPos = bestMove.mid(2, 2);
 
-        board->applyEngineMove(bestMove);
 
+
+        bool ok = board->applyEngineMove(bestMove);
+        if(!ok){
+            gameStatus->setText("Engine move failed!");
+            PawnConstants::isE2EPlay = false;
+            return;
+        }
 
         debugBoardState();
 
@@ -792,8 +809,9 @@ void MainWindow::makeEngineMove() {
 
         playSound(SOUNDTYPE::SOUND_MOVE);
 
-        if(!PawnConstants::isE2EPlay) board->highlightMove(fromPos, toPos);
-
+        if(!PawnConstants::isE2EPlay) {
+            if(shouldHighlightMoves) board->highlightMove(fromPos, toPos);
+        }
         updateCapturedDisplay();
 
         if (board->playerIsWhite) {
@@ -809,7 +827,7 @@ void MainWindow::makeEngineMove() {
                 gameStatus->setText("Black to move");
             }
 
-            QTimer::singleShot(500, this, &MainWindow::makeEngineMove);
+            QTimer::singleShot(500, this, &MainWindow::makeEngineMove); // 500
         }
 
     } else {
@@ -900,9 +918,7 @@ void MainWindow::saveGame() {
                 this,
                 tr("Save Chess Game"),
                 defaultName,
-                tr("Chess Game (*.chess);;All Files (*)"),
-                nullptr,
-                QFileDialog::DontUseNativeDialog
+                "Chess Game (*.chess);;All Files (*)"
                 );
 
     if (fileName.isEmpty()) return;
@@ -935,9 +951,8 @@ void MainWindow::loadGame() {
                 this,
                 tr("Load Chess Game"),
                 PawnConstants::saveDirPath,     // starting directory
-                tr("Chess Game (*.chess);;All Files (*)"),
-                nullptr,
-                QFileDialog::DontUseNativeDialog
+                "Chess Game (*.chess);;All Files (*)"
+
                 );
 
     if (fileName.isEmpty()) return;
@@ -972,13 +987,13 @@ void MainWindow::loadGame() {
         */
 
         bool isEngineTurn = (board->playerIsWhite && !gameState["isWhiteTurn"].toBool()) ||  // You're White, Black's turn = engine
-                            (!board->playerIsWhite && gameState["isWhiteTurn"].toBool());    // You're Black, White's turn = engine
+                (!board->playerIsWhite && gameState["isWhiteTurn"].toBool());    // You're Black, White's turn = engine
 
         if (isEngineTurn) {
             QMessageBox::information(this, "Loading Game",
-                "Game loaded successfully.\n\n"
-                "It's the engine's turn to move.",
-                QMessageBox::Ok);
+                                     "Game loaded successfully.\n\n"
+                                     "It's the engine's turn to move.",
+                                     QMessageBox::Ok);
 
             makeEngineMove();
         }
@@ -1147,7 +1162,8 @@ void MainWindow::onScenarioBuilderClosed()
     board->setStockfishEngine(engine);
 
     // ===== UPDATE ENGINE POSITION =====
-    board->generateFen();
+    //board->generateFen();
+    onSetPosition(board->getCurrentFen());
 
     // ===== SET PLAYER COLOR =====
     // Default: White at bottom (Human plays White)
@@ -1155,7 +1171,7 @@ void MainWindow::onScenarioBuilderClosed()
     board->setPlayerColor(true);
     //board->setBoardFlipped(false);
     //colorToggle->setText("Play as White");
-
+    onSetPosition(board->getCurrentFen());
     // ===== UPDATE UI =====
     gameStatus->setText(board->isWhiteTurn ? "White to move" : "Black to move");
     checkStatusLabel->clear();
@@ -1213,6 +1229,15 @@ void MainWindow::onStartGameFromDialog()
         PawnConstants::isH2HPlay = true;
     }
 
+    if(PawnConstants::startDialogClocksEnabled) {
+        gameInfoDock->setVisible(true);
+    }
+
+    drawButton->setEnabled(true);
+    resignLocalButton->setEnabled(true);
+    resignRemoteButton->setEnabled(true);
+    stopLocalGameButton->setEnabled(true);
+    stopRemoteGameButton->setEnabled(true);
 
     newGame();
 }
@@ -1237,11 +1262,14 @@ void MainWindow::onShowStarDialog()
     PawnConstants::iAMWhite = false;
     PawnConstants::remotePlayStarted = false;
     PawnConstants::isH2HPlay = false;
+
     moveHistory->clear();
     gameStatus->setText("White to move");
     checkStatusLabel->clear();
 
     QTimer::singleShot(100, this, [this]() {
+        newGameDialog->remotePlayCheck()->setVisible(true);
+
         newGameDialog->onColorChanged(newGameDialog->p1ColorCombo()->currentIndex());
         if (newGameDialog->exec() == QDialog::Accepted) {
             onStartGameFromDialog();
@@ -1272,7 +1300,7 @@ void MainWindow::loadPieceIcons()
                                              Qt::KeepAspectRatio, Qt::SmoothTransformation);
         } else {
             pieceIcons[type] = QPixmap(":/piecesets/default/" + type + ".png").scaled(iconSize, iconSize,
-                                             Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                                                                                      Qt::KeepAspectRatio, Qt::SmoothTransformation);
         }
     }
 }
@@ -1535,14 +1563,14 @@ void MainWindow::setupRemoteDock()
 
     startGameBtn = new QPushButton("Start Game", this);
     startGameBtn->setEnabled(false);
-    stopGameBtn = new QPushButton("Stop Game", this);
-    stopGameBtn->setEnabled(false);
-    resignBtn = new QPushButton("Resign", this);
-    resignBtn->setEnabled(false);
+    stopRemoteGameButton = new QPushButton("Stop Game", this);
+    stopRemoteGameButton->setEnabled(false);
+    resignRemoteButton = new QPushButton("Resign", this);
+    resignRemoteButton->setEnabled(false);
 
     gameControlsLayout->addWidget(startGameBtn);
-    gameControlsLayout->addWidget(stopGameBtn);
-    gameControlsLayout->addWidget(resignBtn);
+    gameControlsLayout->addWidget(stopRemoteGameButton);
+    gameControlsLayout->addWidget(resignRemoteButton);
     dockLayout->addWidget(gameControlsGroup);
 
     dockLayout->addStretch();
@@ -1556,8 +1584,8 @@ void MainWindow::setupRemoteDock()
     connect(listenBtn, &QPushButton::clicked, this, &MainWindow::onListenClicked);
     connect(connectBtn, &QPushButton::clicked, this, &MainWindow::onConnect);
     connect(startGameBtn, &QPushButton::clicked, this, &MainWindow::onStartRemoteGame);
-    connect(stopGameBtn, &QPushButton::clicked, this, &MainWindow::onStopRemoteGame);
-    connect(resignBtn, &QPushButton::clicked, this, &MainWindow::onResignGame);
+    connect(stopRemoteGameButton, &QPushButton::clicked, this, &MainWindow::onStopRemoteGame);
+    connect(resignRemoteButton, &QPushButton::clicked, this, &MainWindow::onResign);
     connect(addContactBtn, &QPushButton::clicked, this, &MainWindow::onAddContact);
     connect(editContactBtn, &QPushButton::clicked, this, &MainWindow::onEditContact);
     connect(deleteContactBtn, &QPushButton::clicked, this, &MainWindow::onDeleteContact);
@@ -1580,15 +1608,15 @@ void MainWindow::onListenClicked()
     if (networkManager && PawnConstants::isServerListening) {
 
         QMessageBox::StandardButton reply = QMessageBox::question(
-            this,
-            "Stop Listening",
-            "Are you sure you want to stop listening?\n\n"
-            "This will:\n"
-            "• Terminate the server\n"
-            "• Disconnect any connected peer\n"
-            "• Stop the current game if in progress",
-            QMessageBox::Yes | QMessageBox::No
-        );
+                    this,
+                    "Stop Listening",
+                    "Are you sure you want to stop listening?\n\n"
+                    "This will:\n"
+                    "• Terminate the server\n"
+                    "• Disconnect any connected peer\n"
+                    "• Stop the current game if in progress",
+                    QMessageBox::Yes | QMessageBox::No
+                    );
 
         if (reply == QMessageBox::No) {
             return;
@@ -1690,12 +1718,30 @@ void MainWindow::onStartRemoteGame()
     board->setPlayerColor(true);
     board->setBoardFlipped(false);
 
+    //
+    // ===== SEND CLOCK SETTINGS =====
+    QJsonObject clockMsg;
+    clockMsg["type"] = "clock_settings";
+    clockMsg["enabled"] = PawnConstants::startDialogClocksEnabled;
+    clockMsg["minutes"] = newGameDialog->minutes();
+    clockMsg["increment"] = newGameDialog->increment();
+    networkManager->sendMessage(clockMsg);
+
+    // ===== START CLOCKS LOCALLY =====
+    if (PawnConstants::startDialogClocksEnabled) {
+        //gameInfoDock->setVisible(true);
+        startClocks(newGameDialog->minutes(), newGameDialog->increment());
+    }else{
+        stopClocks();
+        resetClocks();
+    }
+    //
+
     chatManager->sendGameRequest();
     chatDisplay->append("[System] Game request sent. You are White.");
 
-    startGameBtn->setEnabled(false);
-    stopGameBtn->setEnabled(true);
-    resignBtn->setEnabled(true);
+    updateButtons(true);
+
     gameStatus->setText("Your turn (White) - make a move");
 }
 
@@ -1716,36 +1762,14 @@ void MainWindow::onStopRemoteGame()
         return;
     }
 
-    QJsonObject msg;
-    msg["type"] = "game_stop";
-    networkManager->sendMessage(msg);
-
+    if(PawnConstants::isRemotePlay){
+        QJsonObject msg;
+        msg["type"] = "game_stop";
+        networkManager->sendMessage(msg);
+    }
     stopGameLocally("You stopped the game.");
 }
 
-void MainWindow::onResignGame()
-{
-    if (!networkManager) return;
-
-    QMessageBox::StandardButton reply = QMessageBox::question(
-                this,
-                "Resign",
-                "Are you sure you want to resign?",
-                QMessageBox::Yes | QMessageBox::No
-                );
-
-    if (reply == QMessageBox::Yes) {
-        board->setGameOver(true);
-        stopGameBtn->setEnabled(false);
-        resignBtn->setEnabled(false);
-        gameStatus->setText("You resigned.");
-        chatDisplay->append("[System] You resigned.");
-
-        QJsonObject msg;
-        msg["type"] = "resign";
-        networkManager->sendMessage(msg);
-    }
-}
 
 void MainWindow::onAddContact()
 {
@@ -1866,6 +1890,8 @@ void MainWindow::onGameRequestReceived(const QString& sender)
     PawnConstants::iAMWhite = false;
     PawnConstants::remotePlayStarted = true;
 
+
+
     togglePlayerColor();
 
     chatManager->sendGameResponse(true);
@@ -1874,8 +1900,11 @@ void MainWindow::onGameRequestReceived(const QString& sender)
     gameStatus->setText("Waiting for opponent (White) to move...");
 
     startGameBtn->setEnabled(false);
-    stopGameBtn->setEnabled(true);
-    resignBtn->setEnabled(true);
+    drawButton->setEnabled(true);
+    resignLocalButton->setEnabled(true);
+    resignRemoteButton->setEnabled(true);
+    stopLocalGameButton->setEnabled(true);
+    stopRemoteGameButton->setEnabled(true);
 }
 
 
@@ -1895,8 +1924,8 @@ void MainWindow::onGameRejected()
     PawnConstants::remotePlayStarted = false;
 
     startGameBtn->setEnabled(true);
-    stopGameBtn->setEnabled(false);
-    resignBtn->setEnabled(false);
+    stopRemoteGameButton->setEnabled(false);
+    resignRemoteButton->setEnabled(false);
     gameStatus->setText("Game rejected");
 }
 
@@ -1918,7 +1947,7 @@ void MainWindow::onChatReceived(const QString& sender, const QString& message)
 void MainWindow::onMoveReceived(const QString& from, const QString& to)
 {
     if (board->makeMove(from, to)) {
-        board->highlightMove(from, to);
+        if(shouldHighlightMoves) board->highlightMove(from, to);
         updateMoveHistory(board->getLastFormattedMove());
         updateCapturedDisplay();
 
@@ -1983,6 +2012,16 @@ void MainWindow::setupNetworkConnections()
             this, &MainWindow::onGameStoppedByPeer);
     connect(chatManager, &ChatManager::peerDisconnected,
             this, &MainWindow::onPeerDisconnected);
+    connect(chatManager, &ChatManager::peerResigned,
+            this, &MainWindow::onPeerResigned);
+    // In setupNetworkConnections()
+    connect(chatManager, &ChatManager::drawOfferReceived,
+            this, &MainWindow::onDrawOfferReceived);
+    connect(chatManager, &ChatManager::drawResponseReceived,
+            this, &MainWindow::onDrawResponseReceived);
+    // In setupNetworkConnections()
+    connect(chatManager, &ChatManager::clockSettingsReceived,
+            this, &MainWindow::onClockSettingsReceived);
 
 
 
@@ -2118,9 +2157,8 @@ void MainWindow::stopGameLocally(const QString& reason)
 
     PawnConstants::isE2EPlay = false;
 
-    stopGameBtn->setEnabled(false);
-    resignBtn->setEnabled(false);
-    startGameBtn->setEnabled(true);
+    updateButtons(false);
+
     gameStatus->setText(reason);
     //connectBtn->setText("Connect to peer");
     PawnConstants::isRemotePlay = false;
@@ -2128,6 +2166,8 @@ void MainWindow::stopGameLocally(const QString& reason)
 
     QMessageBox::information(this, "Game Stopped", reason);
     chatDisplay->append("[System] " + reason);
+    playSound(SOUNDTYPE::SOUND_CHECKMATE);
+
 }
 
 void MainWindow::onGameStoppedByPeer()
@@ -2225,8 +2265,8 @@ void MainWindow::setupLeftDock()
     gameInfoDock = new QDockWidget("Game Info", this);
     gameInfoDock->setAllowedAreas(Qt::LeftDockWidgetArea);
     gameInfoDock->setFeatures(QDockWidget::DockWidgetClosable |
-                            QDockWidget::DockWidgetMovable |
-                            QDockWidget::DockWidgetFloatable);
+                              QDockWidget::DockWidgetMovable |
+                              QDockWidget::DockWidgetFloatable);
     QWidget* dockWidget = new QWidget(this);
     QVBoxLayout* dockLayout = new QVBoxLayout(dockWidget);
     dockLayout->setSpacing(5);
@@ -2292,11 +2332,11 @@ void MainWindow::setupLeftDock()
     consoleEdit->setMinimumHeight(300);
     consoleEdit->setVisible(false);
     consoleEdit->setStyleSheet(
-        "QTextEdit {"
-        "    background-color: black;"
-        "    color: white;"
-        "}"
-    );
+                "QTextEdit {"
+                "    background-color: black;"
+                "    color: white;"
+                "}"
+                );
     consoleEdit->ensureCursorVisible();
     dockLayout->addWidget(consoleEdit);
     //splitter->addWidget(consoleEdit);
@@ -2376,10 +2416,10 @@ void MainWindow::setupLeftDock()
     connect(engineLoggingBtn, &QPushButton::toggled, this, [this](bool toggled){
         PawnConstants::isEngineLoggingEnabled = toggled;
         if (toggled) {
-               consoleEdit->append(">>> Engine logging enabled");
-           } else {
-               consoleEdit->append(">>> Engine logging disabled");
-           }
+            consoleEdit->append(">>> Engine logging enabled");
+        } else {
+            consoleEdit->append(">>> Engine logging disabled");
+        }
     });
 
 
@@ -2419,7 +2459,7 @@ QString MainWindow::formatTime(int seconds) {
     int minutes = seconds / 60;
     int secs = seconds % 60;
     return QString("%1:%2").arg(minutes, 2, 10, QChar('0'))
-                           .arg(secs, 2, 10, QChar('0'));
+            .arg(secs, 2, 10, QChar('0'));
 }
 
 
@@ -2514,44 +2554,7 @@ void MainWindow::updateClocks() {
 
 
 
-void MainWindow::onStopGame()
-{
-    QMessageBox::StandardButton reply = QMessageBox::question(
-        this,
-        "Stop Game",
-        "Are you sure you want to stop the game?",
-        QMessageBox::Yes | QMessageBox::No
-    );
 
-    if (reply == QMessageBox::No) {
-        return;
-    }
-
-    if (engine) {
-        engine->sendCommand("stop");
-        engine->stopThinking();
-    }
-
-    PawnConstants::isE2EPlay = false;
-
-    /*
-    stopClocks();
-
-    if (board) {
-        board->setGameOver(true);
-    }
-
-    stopGameButton->setEnabled(false);
-    resignButton->setEnabled(false);
-    drawButton->setEnabled(false);
-    gameStatus->setText("Game stopped");
-
-    chatDisplay->append("[System] Game stopped.");
-    */
-    //playGameoverSound();
-    playSound(SOUNDTYPE::SOUND_CHECKMATE);
-
-}
 
 void MainWindow::onResign()
 {
@@ -2566,11 +2569,11 @@ void MainWindow::onResign()
     }
 
     QMessageBox::StandardButton reply = QMessageBox::question(
-        this,
-        "Resign",
-        "Are you sure you want to resign?",
-        QMessageBox::Yes | QMessageBox::No
-    );
+                this,
+                "Resign",
+                "Are you sure you want to resign?",
+                QMessageBox::Yes | QMessageBox::No
+                );
 
     if (reply == QMessageBox::No) {
         return;
@@ -2589,11 +2592,8 @@ void MainWindow::onResign()
         engine->stopThinking();
     }
 
-    PawnConstants::isE2EPlay = false;
 
-    stopGameButton->setEnabled(false);
-    resignButton->setEnabled(false);
-    drawButton->setEnabled(false);
+    updateButtons(false);
 
     if (PawnConstants::isRemotePlay) {
         QJsonObject msg;
@@ -2601,6 +2601,9 @@ void MainWindow::onResign()
         networkManager->sendMessage(msg);
     }
 
+    PawnConstants::isE2EPlay = false;
+    PawnConstants::isRemotePlay = false;
+    PawnConstants::remotePlayStarted = false;
 }
 
 void MainWindow::onDrawOffer()
@@ -2621,11 +2624,11 @@ void MainWindow::onDrawOffer()
     }
 
     QMessageBox::StandardButton reply = QMessageBox::question(
-        this,
-        "Offer Draw",
-        "Do you want to offer a draw?",
-        QMessageBox::Yes | QMessageBox::No
-    );
+                this,
+                "Offer Draw",
+                "Do you want to offer a draw?",
+                QMessageBox::Yes | QMessageBox::No
+                );
 
     if (reply == QMessageBox::No) {
         return;
@@ -2633,20 +2636,19 @@ void MainWindow::onDrawOffer()
 
     if (!PawnConstants::isRemotePlay) {
         QMessageBox::StandardButton response = QMessageBox::question(
-            this,
-            "Draw Offer",
-            "Opponent is offering a draw. Accept?",
-            QMessageBox::Yes | QMessageBox::No
-        );
+                    this,
+                    "Draw Offer",
+                    "Opponent is offering a draw. Accept?",
+                    QMessageBox::Yes | QMessageBox::No
+                    );
 
         if (response == QMessageBox::Yes) {
             board->setGameOver(true);
             gameStatus->setText("Draw by agreement.");
             QMessageBox::information(this, "Draw", "Game is a draw.");
 
-            stopGameButton->setEnabled(false);
-            resignButton->setEnabled(false);
-            drawButton->setEnabled(false);
+            updateButtons(false);
+            playSound(SOUND_CHECKMATE);
         } else {
             gameStatus->setText("Draw offer declined. Continue playing.");
         }
@@ -2664,20 +2666,19 @@ void MainWindow::onDrawOffer()
 void MainWindow::onDrawOfferReceived()
 {
     QMessageBox::StandardButton reply = QMessageBox::question(
-        this,
-        "Draw Offer",
-        "Opponent offers a draw. Accept?",
-        QMessageBox::Yes | QMessageBox::No
-    );
+                this,
+                "Draw Offer",
+                "Opponent offers a draw. Accept?",
+                QMessageBox::Yes | QMessageBox::No
+                );
 
     if (reply == QMessageBox::Yes) {
         board->setGameOver(true);
         gameStatus->setText("Draw by agreement.");
         QMessageBox::information(this, "Draw", "Game is a draw.");
 
-        stopGameButton->setEnabled(false);
-        resignButton->setEnabled(false);
-        drawButton->setEnabled(false);
+        updateButtons(false);
+        playSound(SOUND_CHECKMATE);
 
         QJsonObject msg;
         msg["type"] = "draw_response";
@@ -2700,11 +2701,9 @@ void MainWindow::onDrawResponseReceived(bool accepted)
         board->setGameOver(true);
         gameStatus->setText("Draw by agreement.");
         QMessageBox::information(this, "Draw", "Opponent accepted the draw offer.");
-        stopGameButton->setEnabled(false);
-        resignButton->setEnabled(false);
-        drawButton->setEnabled(false);
-        //playGameoverSound();
-        playSound(SOUNDTYPE::SOUND_CHECKMATE);
+
+        updateButtons(false);
+        playSound(SOUND_CHECKMATE);
 
     } else {
         gameStatus->setText("Draw offer declined. Continue playing.");
@@ -2788,11 +2787,11 @@ void MainWindow::savePGN()
     QString pgn = generatePGN();
 
     QString fileName = QFileDialog::getSaveFileName(
-        this,
-        "Save PGN",
-        PawnConstants::savePGNDirPath + "/game.pgn",
-        "PGN Files (*.pgn);;All Files (*)"
-    );
+                this,
+                "Save PGN",
+                PawnConstants::savePGNDirPath + "/game.pgn",
+                "PGN Files (*.pgn);;All Files (*)"
+                );
 
     if (fileName.isEmpty()) return;
 
@@ -2950,11 +2949,11 @@ void MainWindow::saveHistory()
     QString defaultName = PawnConstants::saveHistoryDirPath + "/history_" + timestamp + ".txt";
 
     QString fileName = QFileDialog::getSaveFileName(
-        this,
-        "Save Game History",
-        defaultName,
-        "History Files (*.txt);;All Files (*)"
-    );
+                this,
+                "Save Game History",
+                defaultName,
+                "History Files (*.txt);;All Files (*)"
+                );
 
     if (fileName.isEmpty()) return;
 
@@ -2986,42 +2985,42 @@ void MainWindow::playSound(SOUNDTYPE type)
     QString soundFile;
 
     switch(type) {
-        case SOUND_MOVE:
-            soundFile = "move_009.wav";
-            break;
-        case SOUND_CHECK:
-            soundFile = "check.wav";
-            break;
-        case SOUND_CHECKMATE:
-            soundFile = "gameover.mp3";
-            break;
-        case SOUND_CAPTURE:
-            soundFile = "capture.wav";
-            break;
-        case SOUND_PROMOTION:
-            soundFile = "specialmove.mp3";
-            break;
-        case SOUND_CASTLING:
-            soundFile = "specialmove.mp3";
-            break;
-        case SOUND_ENPASSANT:
-            soundFile = "specialmove.mp3";
-            break;
-        case SOUND_GAME_OVER:
-            soundFile = "gameover.wav";
-            break;
-        case SOUND_START:
-            soundFile = "start.wav";
-            break;
-        case CHAT_SEND:
-            soundFile = "chatsent.mp3";
-            break;
-        case CHAT_RECEIVED:
-            soundFile = "chatreceived.mp3";
-            break;
-        default:
-            soundFile = "move_009.wav";
-            break;
+    case SOUND_MOVE:
+        soundFile = "move_009.wav";
+        break;
+    case SOUND_CHECK:
+        soundFile = "check.wav";
+        break;
+    case SOUND_CHECKMATE:
+        soundFile = "gameover.mp3";
+        break;
+    case SOUND_CAPTURE:
+        soundFile = "capture.wav";
+        break;
+    case SOUND_PROMOTION:
+        soundFile = "specialmove.mp3";
+        break;
+    case SOUND_CASTLING:
+        soundFile = "specialmove.mp3";
+        break;
+    case SOUND_ENPASSANT:
+        soundFile = "specialmove.mp3";
+        break;
+    case SOUND_GAME_OVER:
+        soundFile = "gameover.wav";
+        break;
+    case SOUND_START:
+        soundFile = "start.wav";
+        break;
+    case CHAT_SEND:
+        soundFile = "chatsent.mp3";
+        break;
+    case CHAT_RECEIVED:
+        soundFile = "chatreceived.mp3";
+        break;
+    default:
+        soundFile = "move_009.wav";
+        break;
     }
 
     m_soundPlayer->setSource(QUrl("qrc:/sound/" + soundFile));
@@ -3039,10 +3038,20 @@ StockfishEngine *MainWindow::createNewEngine()
 
     engine = new StockfishEngine(this);
     connect(engine, &StockfishEngine::engineOutput, this, [this](const QString& line){
-            consoleEdit->append(line);
-            consoleEdit->ensureCursorVisible();
+        consoleEdit->append(line);
+        consoleEdit->ensureCursorVisible();
     });
     return engine;
+}
+
+void MainWindow::updateButtons(bool gameIsRunning)
+{
+    stopLocalGameButton->setEnabled(gameIsRunning);
+    stopRemoteGameButton->setEnabled(gameIsRunning);
+    resignLocalButton->setEnabled(gameIsRunning);
+    resignRemoteButton->setEnabled(gameIsRunning);
+    drawButton->setEnabled(gameIsRunning);
+    startGameBtn->setEnabled(!gameIsRunning);
 }
 
 void MainWindow::openFolder() {
@@ -3162,3 +3171,51 @@ void MainWindow::createPawnsSymlink()
 }
 
 
+void MainWindow::onPeerResigned()
+{
+    // Stop the game
+    board->setGameOver(true);
+
+    // Determine winner (remote player resigned, so YOU win)
+    QString winner = board->playerIsWhite ? "White" : "Black";
+    gameStatus->setText(QString("Opponent resigned. %1 wins!").arg(winner));
+
+    // Play sound
+    playSound(SOUNDTYPE::SOUND_CHECKMATE);
+
+    // Stop engine
+    if (engine) {
+        engine->sendCommand("stop");
+        engine->stopThinking();
+    }
+
+    // Reset flags
+    PawnConstants::isE2EPlay = false;
+    PawnConstants::isRemotePlay = false;
+    PawnConstants::remotePlayStarted = false;
+
+    // Disable buttons
+    stopLocalGameButton->setEnabled(false);
+    stopRemoteGameButton->setEnabled(false);
+    resignLocalButton->setEnabled(false);
+    resignRemoteButton->setEnabled(false);
+    drawButton->setEnabled(false);
+    startGameBtn->setEnabled(true);
+    // Show message
+    QMessageBox::information(this, "Resignation", "Opponent resigned. You win!");
+    chatDisplay->append("[System] Opponent resigned. You win!");
+}
+
+void MainWindow::onClockSettingsReceived(bool enabled, int minutes, int increment)
+{
+    if (enabled) {
+        gameInfoDock->setVisible(true);
+        startClocks(minutes, increment);
+        chatDisplay->append(QString("[System] Clocks enabled: %1 min + %2 sec")
+                            .arg(minutes).arg(increment));
+    } else {
+        stopClocks();
+        resetClocks();
+        chatDisplay->append("[System] Clocks disabled by opponent.");
+    }
+}

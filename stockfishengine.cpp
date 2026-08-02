@@ -153,8 +153,8 @@ bool StockfishEngine::isPositionCheck(const QString& kingPos) {
     QString response = waitForResponse("Checkers:");
 
     bool isCheck = response.contains("Checkers:") &&
-                   !response.contains("Checkers: (none)") &&
-                   !response.contains("Checkers: \n");
+            !response.contains("Checkers: (none)") &&
+            !response.contains("Checkers: \n");
 
 
     return isCheck;

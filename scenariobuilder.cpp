@@ -88,6 +88,7 @@ void ScenarioBuilder::setupUI()
     QGroupBox* enPassantGroup = new QGroupBox("En Passant Target", this);
     QVBoxLayout* enPassantLayout = new QVBoxLayout(enPassantGroup);
     enPassantCombo = new QComboBox(this);
+    enPassantCombo->setToolTip("Select the en passant target square if available");
     enPassantCombo->addItem("None", "");
     QStringList files = {"a","b","c","d","e","f","g","h"};
     for (int rank = 1; rank <= 8; rank++) {
@@ -137,6 +138,7 @@ void ScenarioBuilder::setupUI()
     QHBoxLayout* fenLayout = new QHBoxLayout();
     QPushButton* copyBtn = new QPushButton("Copy FEN", this);
     QPushButton* pasteBtn = new QPushButton("Paste FEN", this);
+    pasteBtn->setToolTip("Paste a FEN string from clipboard to load a scenario");
     connect(copyBtn, &QPushButton::clicked, this, &ScenarioBuilder::onCopyFENClicked);
     connect(pasteBtn, &QPushButton::clicked, this, &ScenarioBuilder::onPasteFENClicked);
     fenLayout->addWidget(copyBtn);
@@ -146,8 +148,9 @@ void ScenarioBuilder::setupUI()
     QPushButton* setBtn = new QPushButton("Set Position", this);
     setBtn->setVisible(false);
     QPushButton* closeBtn = new QPushButton("Close", this);
+    closeBtn->setToolTip("Need to close the Scenario Builder to apply the position to the board");
     QPushButton* saveBtn = new QPushButton("Save", this);
-
+    saveBtn->setToolTip("Save the scenario to load and replay later");
     connect(setBtn, &QPushButton::clicked, this, &ScenarioBuilder::onSetPositionClicked);
     connect(closeBtn, &QPushButton::clicked, this, &ScenarioBuilder::onCloseClicked);
     connect(saveBtn, &QPushButton::clicked, this, &ScenarioBuilder::saveRequested);
@@ -219,8 +222,8 @@ void ScenarioBuilder::onPlaceClicked()
 
         if (board->getPiecesRef()[row][col]) {
             QMessageBox::warning(this, "Square Occupied",
-                "This square already has a piece.\n"
-                "Remove it first before placing a new piece.");
+                                 "This square already has a piece.\n"
+                                 "Remove it first before placing a new piece.");
             return;
         }
     }
@@ -263,6 +266,7 @@ void ScenarioBuilder::onCopyFENClicked()
     QMessageBox::information(this, "Copied!", "FEN copied to clipboard!");
 }
 
+/*
 void ScenarioBuilder::onPasteFENClicked()
 {
     QString fen = QApplication::clipboard()->text();
@@ -275,6 +279,55 @@ void ScenarioBuilder::onPasteFENClicked()
     if (parts.size() > 1) {
         if (parts[1] == "w") whiteTurn->setChecked(true);
         else blackTurn->setChecked(true);
+    }
+
+    emit setPositionRequested(fen);
+    QMessageBox::information(this, "Success", "FEN loaded from clipboard!");
+}
+*/
+
+void ScenarioBuilder::onPasteFENClicked()
+{
+    QString fen = QApplication::clipboard()->text();
+    if (fen.isEmpty()) {
+        QMessageBox::warning(this, "Error", "Clipboard is empty.");
+        return;
+    }
+
+    QStringList parts = fen.split(' ');
+
+    // Turn
+    if (parts.size() > 1) {
+        if (parts[1] == "w") whiteTurn->setChecked(true);
+        else blackTurn->setChecked(true);
+    }
+
+    // Castling rights
+    if (parts.size() > 2) {
+        QString castling = parts[2];
+        castleK->setChecked(castling.contains('K'));
+        castleQ->setChecked(castling.contains('Q'));
+        castlek->setChecked(castling.contains('k'));
+        castleq->setChecked(castling.contains('q'));
+    }
+
+    // En passant
+    if (parts.size() > 3) {
+        QString ep = parts[3];
+        if (ep != "-") {
+            int index = enPassantCombo->findData(ep);
+            if (index >= 0) enPassantCombo->setCurrentIndex(index);
+        } else {
+            enPassantCombo->setCurrentIndex(0);
+        }
+    }
+
+    // Move counters
+    if (parts.size() > 4) {
+        halfmoveSpin->setValue(parts[4].toInt());
+    }
+    if (parts.size() > 5) {
+        fullmoveSpin->setValue(parts[5].toInt());
     }
 
     emit setPositionRequested(fen);
@@ -332,11 +385,11 @@ QString ScenarioBuilder::generateFEN()
     if (enPassant.isEmpty()) enPassant = "-";
 
     return QString(" ") +
-           (whiteTurn->isChecked() ? "w" : "b") + " " +
-           (castling.isEmpty() ? "-" : castling) + " " +
-           enPassant + " " +
-           QString::number(halfmoveSpin->value()) + " " +
-           QString::number(fullmoveSpin->value());
+            (whiteTurn->isChecked() ? "w" : "b") + " " +
+            (castling.isEmpty() ? "-" : castling) + " " +
+            enPassant + " " +
+            QString::number(halfmoveSpin->value()) + " " +
+            QString::number(fullmoveSpin->value());
 }
 
 void ScenarioBuilder::parsePieceString(const QString& pieceStr, QString& color, QString& type)
