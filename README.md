@@ -1,10 +1,21 @@
-# Pawns Chess
+# Pawns
+
+![Pawns Screenshot](screenshots/full.png)
 
 ![Pawns Chess](https://img.shields.io/badge/C%2B%2B-17-blue.svg)
 ![Qt](https://img.shields.io/badge/Qt-6.11-green.svg)
 ![License](https://img.shields.io/badge/License-GPLv3-red.svg)
 
 A feature-rich chess application built with C++ and Qt6. Play against Stockfish, challenge friends locally or remotely, or watch engines battle it out.
+
+**Download**
+
+| Platform | Where to Get It |
+| :--- | :--- |
+| **Linux** | [Flathub](https://flathub.org/en/apps/search?q=alamahant) |
+| **Windows and Mac** | [Buy on Gumroad](https://jnanadhakini.gumroad.com/) - Pre-compiled binary, no compilation needed |
+
+---
 
 ## Features
 
