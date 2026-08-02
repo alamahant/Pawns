@@ -14,7 +14,7 @@
   <description>
     <p>
       Pawns is a feature-rich chess application that lets you play against Stockfish engine,
-      challenge friends in local or remote play, create custom positions, and analyze games.
+      challenge friends in local or remote p2p play, create custom scenarios, and analyze games.
     </p>
 
     <p>
@@ -97,10 +97,30 @@
   <url type="bugtracker">https://github.com/alamahant/Pawns/issues</url>
 
   <screenshots>
-    <screenshot type="default">
-      <caption>Chess board with pieces</caption>
-      <image>https://raw.githubusercontent.com/alamahant/Pawns/master/screenshots/Main.png</image>
-    </screenshot>
+      <screenshot type="default">
+    <caption>Main interface of Pawns</caption>
+    <image>https://raw.githubusercontent.com/alamahant/Pawns/master/screenshots/main.png</image>
+  </screenshot>
+  <screenshot>
+    <caption>Game in progress with clocks and move history</caption>
+    <image>https://raw.githubusercontent.com/alamahant/Pawns/master/screenshots/game_in_progress.png</image>
+  </screenshot>
+  <screenshot>
+    <caption>Scenario Builder for custom positions</caption>
+    <image>https://raw.githubusercontent.com/alamahant/Pawns/master/screenshots/scenario_builder.png</image>
+  </screenshot>
+  <screenshot>
+    <caption>Replay tool for game analysis</caption>
+    <image>https://raw.githubusercontent.com/alamahant/Pawns/master/screenshots/replay_tool.png</image>
+  </screenshot>
+  <screenshot>
+    <caption>Start game dialog</caption>
+    <image>https://raw.githubusercontent.com/alamahant/Pawns/master/screenshots/start_dialog.png</image>
+  </screenshot>
+  <screenshot>
+    <caption>Full application view</caption>
+    <image>https://raw.githubusercontent.com/alamahant/Pawns/master/screenshots/full.png</image>
+  </screenshot>
   </screenshots>
 
   <releases>
