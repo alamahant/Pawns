@@ -61,16 +61,18 @@
       <li>Console for engine output and UCI commands</li>
     </ul>
 
-    <p>
-      Remote Play:
-    </p>
-    <ul>
-      <li>SSL-encrypted P2P connection</li>
-      <li>Contact list with IP/port storage</li>
-      <li>In-game chat</li>
-      <li>UPnP port forwarding support</li>
-      <li>Resign, draw offer, and stop game functionality</li>
-    </ul>
+<p>
+  Remote Play:
+</p>
+<ul>
+  <li>SSL-encrypted P2P connection</li>
+  <li>Contact list with IP/port storage</li>
+  <li>In-game chat</li>
+  <li>DTLS encrypted push-to-talk audio</li>
+  <li>LAN peer discovery via UDP broadcast</li>
+  <li>UPnP port forwarding support</li>
+  <li>Resign, draw offer, and stop game functionality</li>
+</ul>
 
     <p>
       Engine Support:
@@ -124,6 +126,19 @@
   </screenshots>
 
   <releases>
+    <release version="1.0.1" date="2026-09-12">
+      <description>
+        <ul>
+          <li>DTLS encrypted push-to-talk audio</li>
+          <li>LAN peer discovery via UDP broadcast</li>
+          <li>Audio button status indicator</li>
+          <li>Connection status per peer</li>
+          <li>Improved UPnP port forwarding dialog</li>
+          <li>Auto-close ports on app exit</li>
+          <li>LAN and WAN IP display</li>
+        </ul>
+      </description>
+
     <release version="1.0.0" date="2026-08-02">
       <description>
         <ul>
