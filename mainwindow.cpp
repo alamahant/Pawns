@@ -2250,6 +2250,13 @@ void MainWindow::onChatReceived(const QString& sender, const QString& message)
 void MainWindow::onMoveReceived(const QString& from, const QString& to)
 {
     if (board->makeMove(from, to)) {
+
+        if (board->isGameOver()) {
+            playSound(SOUND_CHECKMATE);
+        } else {
+            playSound(SOUND_MOVE);
+        }
+
         if(shouldHighlightMoves) board->highlightMove(from, to);
         updateMoveHistory(board->getLastFormattedMove());
         updateCapturedDisplay();
