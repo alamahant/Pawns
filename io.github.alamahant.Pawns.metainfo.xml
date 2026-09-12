@@ -126,6 +126,7 @@
   </screenshots>
 
   <releases>
+
     <release version="1.0.1" date="2026-09-12">
       <description>
         <ul>
@@ -138,6 +139,7 @@
           <li>LAN and WAN IP display</li>
         </ul>
       </description>
+	</release>
 
     <release version="1.0.0" date="2026-08-02">
       <description>
