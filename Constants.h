@@ -34,6 +34,9 @@ namespace PawnConstants {
     extern const QSize bothDocksOpen;
     extern bool isEngineLoggingEnabled;
     extern bool isServerListening;
+    extern quint16 listeningPort;
+    extern bool isAudioChatEnabled;
+
 }
 
 #endif // CONSTANTS_H

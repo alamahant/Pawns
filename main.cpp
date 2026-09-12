@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("Alamahant");
 
     QCoreApplication::setApplicationName("Pawns");
-    QCoreApplication::setApplicationVersion("1.0.0");
+    QCoreApplication::setApplicationVersion("1.0.1");
 
     QDir().mkpath(PawnConstants::APPDIR);
     QDir().mkpath(PawnConstants::saveDirPath);

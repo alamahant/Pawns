@@ -45,6 +45,10 @@ void ChatManager::onMessageReceived(const QJsonObject& message)
         emit drawResponseReceived(accepted);
     }    else if (type == "clock_settings") {
         handleClockSettings(message);
+    } else if (type == "audio_request") {
+        handleAudioRequest(message);
+    } else if (type == "audio_response") {
+        handleAudioResponse(message);
     }
 }
 
@@ -227,4 +231,36 @@ void ChatManager::handleClockSettings(const QJsonObject& message)
     int minutes = message["minutes"].toInt();
     int increment = message["increment"].toInt();
     emit clockSettingsReceived(enabled, minutes, increment);
+}
+
+void ChatManager::sendAudioRequest()
+{
+    QJsonObject msg;
+    msg["type"] = "audio_request";
+    msg["sender"] = myName;
+    networkManager->sendMessage(msg);
+}
+
+void ChatManager::sendAudioResponse(bool accept)
+{
+    QJsonObject msg;
+    msg["type"] = "audio_response";
+    msg["accepted"] = accept;
+    networkManager->sendMessage(msg);
+}
+
+void ChatManager::handleAudioRequest(const QJsonObject& msg)
+{
+    QString sender = msg["sender"].toString();
+    emit audioRequestReceived(sender);
+}
+
+void ChatManager::handleAudioResponse(const QJsonObject& msg)
+{
+    bool accepted = msg["accepted"].toBool();
+    if (accepted) {
+        emit audioAccepted();
+    } else {
+        emit audioRejected();
+    }
 }

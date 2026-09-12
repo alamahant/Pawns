@@ -51,6 +51,8 @@ A feature-rich chess application built with C++ and Qt6. Play against Stockfish,
 - SSL-encrypted P2P connection
 - Contact list with IP/port storage
 - In-game chat
+- DTLS encrypted push-to-talk audio
+- LAN peer discovery via UDP broadcast
 - UPnP port forwarding support
 - Resign, draw offer, and stop game functionality
 

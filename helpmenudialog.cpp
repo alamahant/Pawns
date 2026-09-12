@@ -1173,6 +1173,12 @@ QString HelpMenuDialog::getFeaturesContent()
                 <h3 style="color: #1abc9c;">SSL-Encrypted P2P Connection</h3>
                 <p>Secure peer-to-peer communication.</p>
 
+                <h3 style="color: #1abc9c;">DTLS Encrypted Push-to-Talk Audio</h3>
+                <p>Encrypted voice chat during remote games.</p>
+
+                <h3 style="color: #1abc9c;">LAN Peer Discovery</h3>
+                <p>Automatic discovery of peers on your local network via UDP broadcast.</p>
+
                 <h3 style="color: #1abc9c;">Contact List</h3>
                 <p>Store IP addresses and ports for quick connections.</p>
 
@@ -1227,7 +1233,6 @@ QString HelpMenuDialog::getFeaturesContent()
     )";
 }
 
-
 QString HelpMenuDialog::getInstructionsContent()
 {
     return R"(
@@ -1240,7 +1245,7 @@ QString HelpMenuDialog::getInstructionsContent()
             Pawns is a chess application with multiple game modes, engine support, and analysis tools.
         </p>
         <ul style="padding-left: 20px; margin-bottom: 8px;">
-            <li>Click <strong>File → New Game</strong> or press <strong>Ctrl+N</strong> to start</li>
+            <li>Click <strong>File - New Game</strong> or press <strong>Ctrl+N</strong> to start</li>
             <li>Choose players (Human/Machine) and color preferences</li>
             <li>Set time control and click <strong>Start Game</strong></li>
         </ul>
@@ -1313,11 +1318,23 @@ QString HelpMenuDialog::getInstructionsContent()
         <h3 style="color: #1abc9c;">Connecting</h3>
         <p>Enter the opponent's IP and port, then click <strong>Connect to peer</strong>.</p>
 
+        <h3 style="color: #1abc9c;">LAN Peer Discovery</h3>
+        <p>Click the globe icon in the Contacts section to automatically find peers on your local network.</p>
+        <p>Note: Both players must use the default port 12345 for auto discovery to work.</p>
+
+        <h3 style="color: #1abc9c;">Push-to-Talk Audio</h3>
+        <p>Click the phone icon to request an audio connection. Once connected, hold the PTT button to speak.</p>
+        <p>Audio is encrypted with DTLS for secure voice communication.</p>
+
         <h3 style="color: #1abc9c;">In-Game Chat</h3>
         <p>Use the chat input in the Remote Play dock to communicate with your opponent.</p>
 
         <h3 style="color: #1abc9c;">Game Controls</h3>
         <p>Stop the game, resign, or offer a draw using the buttons in the top-right corner.</p>
+
+        <h3 style="color: #1abc9c;">UPnP Port Forwarding</h3>
+        <p>Click the UPnP button to automatically open ports on your router for internet play.</p>
+        <p>Ports close automatically when the application exits.</p>
     </div>
 
     <h2 style="color: #e67e22; border-bottom: 2px solid #e67e22; padding-bottom: 5px;">Tools</h2>
@@ -2233,60 +2250,30 @@ QString HelpMenuDialog::getOnNamedProfilesContent()
 
 }
 
+
 QString HelpMenuDialog::getChangelogContent()
 {
     return QString(
         "<h3>Changelog</h3>"
 
-        "<h4>[v1.2.2] - 2025-10-31</h4>"
+        "<h4>[v1.0.1] - 2026-09-12</h4>"
         "<ul>"
-        "<li><b>Custom Context Menu Implementation:</b> Subclassed QWebEnginePage and created a fully functional custom context menu with enhanced functionality and improved user experience.</li>"
-        "<li><b>Consistent Profile Linking:</b> Ensured links opened from a tab share the same profile type as the calling tab, maintaining profile consistency across navigation and new tab operations.</li>"
-        "<li><b>Code Polishes and Improvements:</b> Performed various code optimizations, refactoring, and maintenance improvements for better performance, stability, and maintainability.</li>"
+        "<li><b>DTLS Encrypted Push-to-Talk Audio:</b> Added secure voice communication during remote games using DTLS encryption.</li>"
+        "<li><b>LAN Peer Discovery:</b> Automatic discovery of peers on your local network via UDP broadcast. Both players must use the default port 12345 for auto discovery.</li>"
+        "<li><b>Audio Button Status Indicator:</b> The audio button now turns green when voice chat is connected.</li>"
+        "<li><b>Connection Status Per Peer:</b> The connection indicator now reflects the status of the selected contact.</li>"
+        "<li><b>Improved UPnP Port Forwarding Dialog:</b> Clearer instructions for opening the required ports on your router.</li>"
+        "<li><b>Auto-Close Ports on Exit:</b> All UPnP port mappings are automatically closed when the application exits.</li>"
+        "<li><b>LAN and WAN IP Display:</b> View your local and public IP addresses directly from the Tools menu.</li>"
         "</ul>"
 
-        "<h4>[v1.2.1] - 2025-07-23</h4>"
+        "<h4>[v1.0.0] - 2026-08-02</h4>"
         "<ul>"
-        "<li><b>Session Profile Tagging Bug Fixed:</b> Resolved an issue introduced with named profiles where some tabs were not saved or displayed with the correct profile when saving sessions. Now, tabs are reliably saved and shown with their associated profile—Shared Universal, Named, or Private—according to the UI profile settings at launch time.</li>"
-        "<li><b>Improved Security Dialogs and User Experience:</b> All security-related dialogs (master password setup, password protection toggle) now include a Cancel button and properly abort the operation if Cancel or the window close (X) is pressed. This ensures that no unintended changes occur if the user cancels at any step, and toggle actions are always reverted if the process is not completed.</li>"
-        "<li><b>Audio Support in Flatpak:</b> Added `pulseaudio` permission to the Flatpak manifest, enabling sound playback in the application.</li>"
-        "<li><b>Fullscreen Video Support:</b> Implemented full screen functionality for embedded and standalone videos, enhancing the media viewing experience.</li>"
-        "<li><b>Open Copied Link in New Tab:</b> Added a toolbar action and F11 shortcut to instantly open a copied link from the clipboard in a new tab.</li>"
-        "<li><b>Code Optimizations and Polishes:</b> Performed various code improvements and optimizations for better performance, stability, and maintainability.</li>"
-        "</ul>"
-
-        "<h4>[v1.2.0] - 2025-06-20</h4>"
-        "<ul>"
-        "<li><b>Named Shared Profiles:</b> Implemented contextual browsing environments allowing multiple tabs to share the same browsing context under meaningful labels like \"Work,\" \"Home,\" or \"Research\"</li>"
-        "<li><b>Integrated Ad Blocker:</b> Added comprehensive ad blocking functionality with toggle option in Tools menu</li>"
-        "<li><b>Enhanced Browser Privacy:</b> Implemented custom request interceptor with standardized headers and secure default headers</li>"
-        "<li><b>Profile Management Tools:</b> Added profile manager dialog for creating, deleting, and cleaning Named Shared Profiles</li>"
-        "<li><b>UI Improvements:</b> Added visual indicators for active Named profile and improved toolbar layout</li>"
-        "</ul>"
-
-        "<h4>[v1.1.0] - 2025-06-12</h4>"
-        "<ul>"
-        "<li><b>New Symlink-Based Storage System:</b> Dramatically reduces disk space usage by using symbolic links instead of copying entire directories</li>"
-        "<li><b>Progress Bar for Session Saving:</b> Added visual feedback to prevent premature closure during session saves</li>"
-        "<li><b>Automatic Cleanup:</b> Implemented cleanup of orphaned profile directories at startup (configurable in Tools menu)</li>"
-        "<li><b>Help Documentation:</b> Added documentation explaining the new storage system benefits and recommendations</li>"
-        "</ul>"
-
-        "<h4>[v1.0.1] - 2025-06-07</h4>"
-        "<ul>"
-        "<li><b>Enhanced UI and Functionality:</b> Added fully functional URL bar with toggle visibility</li>"
-        "<li><b>Website Card Creation:</b> New feature to create website cards directly from currently loaded URL</li>"
-        "<li><b>Fixed Dashboard Size:</b> Set dashboard to fixed size while keeping web view resizable</li>"
-        "<li><b>Theme Improvements:</b> Enhanced theme handling for help menu items</li>"
-        "<li><b>Bug Fixes:</b> Fixed critical QWebEngineView resizing bugs and website card update button connections</li>"
-        "</ul>"
-
-        "<h4>[v1.0.0] - 2025-06-01</h4>"
-        "<ul>"
-        "<li><b>Initial Release:</b> Jasmine Website and Session Manager</li>"
-        "<li><b>Core Features:</b> Website and session management with card-based interface, multi-tab restoration, private profile system</li>"
-        "<li><b>Security:</b> Master password protection with SHA-256 encryption, two-factor authentication (2FA) code generator</li>"
-        "<li><b>Productivity:</b> Built-in download manager, screenshot capture, multi-account support</li>"
+        "<li><b>Initial Release:</b> Pawns Chess Application</li>"
+        "<li><b>Full Chess Engine Integration:</b> Stockfish engine with adjustable difficulty (0-20).</li>"
+        "<li><b>Remote Play with SSL Encryption:</b> Secure peer-to-peer chess over the network.</li>"
+        "<li><b>Scenario Builder:</b> Create and save custom board positions.</li>"
+        "<li><b>PGN Export and Replay:</b> Export games in standard PGN format and replay them move by move.</li>"
         "</ul>"
     );
 }

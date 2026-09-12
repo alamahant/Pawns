@@ -2,6 +2,7 @@
 #include"Constants.h"
 #include<QRandomGenerator>
 #include<QTimer>
+#include<QMessageBox>
 
 NewGameDialog::NewGameDialog(QWidget* parent) : QDialog(parent) {
     setWindowTitle("New Game");
@@ -61,14 +62,25 @@ NewGameDialog::NewGameDialog(QWidget* parent) : QDialog(parent) {
     p2Layout->addRow("Type:", m_p2TypeCombo);
 
     QVBoxLayout* checkLayout = new QVBoxLayout();
-    m_remotePlayCheck = new QCheckBox("Remote Play (P2P)");
+    m_remotePlayCheck = new QCheckBox("Open Remote Play Dock (P2P)");
     m_remotePlayCheck->setChecked(false);
-    m_remotePlayCheck->setVisible(false);
+    m_remotePlayCheck->setVisible(true);
 
 
 
 
     connect(m_remotePlayCheck, &QCheckBox::toggled, this, [this](bool toggled){
+        if (toggled) {
+               QMessageBox::information(
+                   this,
+                   "Remote Play",
+                   "To continue with Remote Play:\n\n"
+                   "1. Please click Cancel to close this dialog.\n\n"
+                   "2. In the Remote Connections dock, first connect to a peer.\n\n"
+                   "3. Then start the game by clicking the 'Start Game' button\n"
+                   "   from the dock."
+               );
+           }
         emit remoteDockVisible(toggled);
     });
 

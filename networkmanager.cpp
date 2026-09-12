@@ -14,7 +14,6 @@ void CustomSslServer::incomingConnection(qintptr socketDescriptor)
 
     // ===== CHECK BEFORE CREATING SSL SOCKET =====
     if (m_manager && m_manager->isConnected()) {
-        qDebug() << "⚠️ Already connected - rejecting";
         QTcpSocket tempSocket;
         tempSocket.setSocketDescriptor(socketDescriptor);
         tempSocket.disconnectFromHost();

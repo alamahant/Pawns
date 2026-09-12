@@ -24,23 +24,27 @@
 #include<QDesktopServices>
 #include"helpmenudialog.h"
 #include"donationdialog.h"
+#include<QHostInfo>
+#include"QNetworkInterface"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , engine(new StockfishEngine(this))
+   // , engine(new StockfishEngine(this))
     , networkManager(new NetworkManager(this))
     , chatManager(new ChatManager(networkManager, this))
     , newGameDialog(new NewGameDialog(this))
     , upnpDialog(new UPnPManagerDialog(this))
-    , m_soundPlayer(new QMediaPlayer(this))
-    , m_audioOutput(new QAudioOutput(this))
+    , m_soundPlayer(new QSoundEffect(this))
+    //, m_audioOutput(new QAudioOutput(this))
     //, replayDialog(new ReplayDialog(this))
+    , discoveryManager(new DiscoveryManager(this))
 {
+    m_soundPlayer->setVolume(0.5);
     ui->setupUi(this);
     setWindowIcon(QIcon(":/io.github.alamahant.Pawns.png"));
-    m_soundPlayer->setAudioOutput(m_audioOutput);
-    m_audioOutput->setVolume(0.5);
+   // m_soundPlayer->setAudioOutput(m_audioOutput);
+   // m_audioOutput->setVolume(0.5);
     QSettings settings;
 
     int savedSize = settings.value("squareSize", 65).toInt();
@@ -60,6 +64,9 @@ MainWindow::MainWindow(QWidget *parent)
     resize(PawnConstants::startingSize);
 
     setupRemoteDock();
+
+    PawnConstants::isAudioChatEnabled = settings.value("audiochatenabled", true).toBool();
+    enableAudioChatAction->setChecked(PawnConstants::isAudioChatEnabled);
 
     setupLeftDock();
 
@@ -154,12 +161,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     onShowStarDialog();
 
+    /*
     connect(engine, &StockfishEngine::engineOutput, this, [this](const QString& line){
         consoleEdit->append(line);
         consoleEdit->ensureCursorVisible();
     });
 
-
+    */
     connect(replayDialog, &ReplayDialog::loadCurrentHistoryRequested, this, [this]{
         if (!replayDialog) {
             replayDialog = new ReplayDialog(this);
@@ -193,6 +201,14 @@ MainWindow::MainWindow(QWidget *parent)
     connect(replayDialog, &ReplayDialog::playSound, this, [this](SOUNDTYPE soundtype){
         playSound(soundtype);
     });
+
+    discoveryManager->setMyName(QHostInfo::localHostName());
+    discoveryManager->setMyPort(PawnConstants::listeningPort);
+    discoveryManager->startListening();
+    connect(discoveryManager, &DiscoveryManager::peerDiscovered,
+            this, &MainWindow::onPeerDiscovered);
+    //connect(discoveryManager, &DiscoveryManager::peerRemoved,
+      //   this, &MainWindow::onPeerRemoved);
 }
 
 MainWindow::~MainWindow()
@@ -200,6 +216,12 @@ MainWindow::~MainWindow()
     delete ui;
     delete engine;
     delete board;
+    if (m_voice) {
+        m_voice->disconnect();
+        m_voice->stopSession();
+        delete m_voice;
+        m_voice = nullptr;
+    }
     if(upnpDialog){
         upnpDialog->closeAllPorts();
 
@@ -428,11 +450,11 @@ void MainWindow::createMenus() {
         settings.setValue("showboardmarkings",toggled);
         if(toggled){
             if (board) {
-                board->redrawMarkings();  // ← Live update
+                board->redrawMarkings();
             }
         }else {
             if (board) {
-                board->clearMarkings();  // ← Live update
+                board->clearMarkings();
             }
         }
     });
@@ -484,11 +506,11 @@ void MainWindow::createMenus() {
 
             if (board) {
                 if(newGameDialog){
-                    newGameDialog->p1ColorCombo()->setCurrentIndex(0);  // ← Use setCurrentIndex
+                    newGameDialog->p1ColorCombo()->setCurrentIndex(0);
                 }
                 onClearBoard();
 
-                // ===== FIX: Flip if Player1 is Black =====
+                // ===== Flip if Player1 is Black =====
                 board->setBoardFlipped(!PawnConstants::startDialogPlayer1IsWhite);
 
                 scenarioBuilder->setBoard(board);
@@ -513,6 +535,18 @@ void MainWindow::createMenus() {
     connect(replayAct, &QAction::triggered, this, &MainWindow::onReplayGame);
     toolsMenu->addAction(replayAct);
 
+    toolsMenu->addSeparator();
+    QAction* ipsAct = new QAction(tr("&Show My IPs"), this);
+    connect(ipsAct, &QAction::triggered, this, [this]() {
+        QString lanIp = getLanIP();
+        QString wanIp = getExternalIP();
+
+        QMessageBox::information(this, "My IP Addresses",
+                                 "LAN IP: " + (lanIp.isEmpty() ? "Not found" : lanIp) + "\n" +
+                                 "WAN IP: " + (wanIp.isEmpty() ? "Not found" : wanIp));
+    });
+    toolsMenu->addAction(ipsAct);
+
     QMenu* settingsMenu = menuBar()->addMenu(tr("&Settings"));
 
     playSoundAction = new QAction("&Play Audio", this);
@@ -525,6 +559,17 @@ void MainWindow::createMenus() {
         playSounds = toggled;
     });
     settingsMenu->addAction(playSoundAction);
+
+    settingsMenu->addSeparator();
+    enableAudioChatAction = new QAction("&Enable Audio Chat", this);
+    enableAudioChatAction->setCheckable(true);
+    //enableAudioChatAction->setChecked(true);
+    connect(enableAudioChatAction, &QAction::toggled, this, [this](bool enabled){
+        QSettings settings;
+        settings.setValue("audiochatenabled", enabled);
+    });
+    settingsMenu->addAction(enableAudioChatAction);
+    settingsMenu->addSeparator();
 
     QAction* resetSettingsAction = new QAction("&Reset Settings", this);
     connect(resetSettingsAction, &QAction::triggered, this, [this](){
@@ -571,6 +616,13 @@ void MainWindow::createMenus() {
             HelpMenuDialog dialog(HelpType::Instructions, this);
             dialog.exec();
         });
+
+        QAction *changelogAction = helpMenu->addAction("Changelog");
+        connect(changelogAction, &QAction::triggered, [this]() {
+            HelpMenuDialog dialog(HelpType::onChangelog, this);
+            dialog.exec();
+        });
+
         QAction *supportusAction = helpMenu->addAction("Support Us");
             connect(supportusAction, &QAction::triggered, [this]() {
                 DonationDialog dialog(this);
@@ -1066,8 +1118,6 @@ void MainWindow::revertPiecePosition() {
 
 void MainWindow::debugBoardState() {
     return;
-    qWarning() << "══════════════════════════════════════════";
-    qWarning() << "BOARD STATE:";
     for (int row = 0; row < 8; row++) {
         QString line = QString("%1 ").arg(8 - row);
         for (int col = 0; col < 8; col++) {
@@ -1079,11 +1129,7 @@ void MainWindow::debugBoardState() {
                 line += ". ";
             }
         }
-        qWarning() << line;
     }
-    qWarning() << "  a b c d e f g h";
-    qWarning() << "FEN:" << board->getCurrentFen();
-    qWarning() << "══════════════════════════════════════════";
 }
 
 void MainWindow::dumpFen() {
@@ -1527,15 +1573,58 @@ void MainWindow::setupRemoteDock()
 
     QHBoxLayout* connectionButtons = new QHBoxLayout();
     listenBtn = new QPushButton("Start Listening", this);
-    connectBtn = new QPushButton("Connect to peer", this);
+
+    initializeAudioBtn = new QPushButton(this);
+    initializeAudioBtn->setIcon(QIcon(":/icons/phone-forwarded"));
+    initializeAudioBtn->setToolTip("Request audio connection with peer");
+
+    // Connect button click
+    connect(initializeAudioBtn, &QPushButton::clicked, this, [this]{
+        if (!networkManager || !networkManager->isConnected()) {
+            QMessageBox::warning(this, "Not Connected", "Connect to a peer first.");
+            return;
+        }
+
+        if (m_voice && m_voice->isConnected()) {
+            QMessageBox::information(this, "Audio Active", "Audio already connected.");
+            return;
+        }
+
+        chatManager->sendAudioRequest();
+        QMessageBox::information(this, "Audio Request", "Request sent. Waiting for response...");
+    });
+
+    connectBtn = new QPushButton("Connect", this);
     upnBtn = new QPushButton("UPnP", this);
+    upnBtn->setToolTip(
+        "UPnP Port Forwarding\n\n"
+        "Automatically open ports on your router\n"
+        "for remote play over the internet.\n\n"
+        "Ports auto-close on app exit."
+    );
     connect(upnBtn, &QPushButton::clicked, this, [this]{
         upnpDialog->show();
         upnpDialog->raise();
+        QMessageBox::information(
+            this,
+            "UPnP Port Forwarding",
+            "For remote play to work, you need to forward these ports on your router:\n\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "Port 12345 (TCP + UDP)\n"
+            "   → For: Chat (TCP) + Audio (UDP)\n\n"
+            "Port 12346 (UDP ONLY)\n"
+            "   → For: LAN Peer Discovery\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            "It is advisable to leave the port unchanged\n"
+            "and open 12345 TCP/UDP + 12346 UDP.\n\n"
+            "All ports will auto-close on app exit."
+        );
+
     });
 
     connectionButtons->addWidget(listenBtn);
     connectionButtons->addWidget(connectBtn);
+    connectionButtons->addWidget(initializeAudioBtn);
     connectionButtons->addWidget(upnBtn);
 
 
@@ -1552,11 +1641,25 @@ void MainWindow::setupRemoteDock()
     connect(contactList, &QListWidget::itemClicked, this, &MainWindow::onContactSelected);
 
     QHBoxLayout* contactButtons = new QHBoxLayout();
+    QPushButton* findPeersBtn = new QPushButton(this);
+    findPeersBtn->setIcon(QIcon(":/icons/globe.svg"));
+
+    findPeersBtn->setToolTip(
+        "<html>"
+        "<b>Discover Peers in LAN</b><br><br>"
+        "<i>Note:</i> To avail of auto discovery, both you and your peers<br>"
+        "must use the default port <b>12345</b>."
+        "</html>"
+    );
+
+    connect(findPeersBtn, &QPushButton::clicked, this, &MainWindow::onFindPeersClicked);
+
     addContactBtn = new QPushButton("Add", this);
     editContactBtn = new QPushButton("Edit", this);
     deleteContactBtn = new QPushButton("Delete", this);
     deleteContactBtn->setEnabled(false);
 
+    contactButtons->addWidget(findPeersBtn);
     contactButtons->addWidget(addContactBtn);
     contactButtons->addWidget(editContactBtn);
     contactButtons->addWidget(deleteContactBtn);
@@ -1578,8 +1681,50 @@ void MainWindow::setupRemoteDock()
     chatInput->setPlaceholderText("Type a message...");
     sendBtn = new QPushButton("Send", this);
 
+
+    //
+    m_voice = new VoiceManager(this);
+
+    pttButton = new QPushButton(this);
+    pttButton->setIcon(QIcon(":/icons/phone-call.svg"));
+    pttButton->setToolTip("Press To Talk");
+    pttButton->setEnabled(false);
+
+    // PTT button connections
+    connect(pttButton, &QPushButton::pressed, this, [this]() {
+        m_voice->startTalking();
+        pttButton->setToolTip("Release to Stop");
+        pttButton->setStyleSheet("background-color: red; color: white;");
+    });
+
+    connect(pttButton, &QPushButton::released, this, [this]() {
+        m_voice->stopTalking();
+        pttButton->setToolTip("Press To Talk");
+        pttButton->setStyleSheet("");
+    });
+
+    // Status updates
+    connect(m_voice, &VoiceManager::connected, this, [this]() {
+        pttButton->setEnabled(true);
+        chatDisplay->append("[Voice] Connected - Hold PTT to speak");
+        updateConnectionStatus();
+    });
+
+    connect(m_voice, &VoiceManager::disconnected, this, [this]() {
+        pttButton->setEnabled(false);
+        chatDisplay->append("[Voice] Disconnected");
+        updateConnectionStatus();
+    });
+
+    connect(m_voice, &VoiceManager::peerTalkingChanged, this,
+            [this](bool talking) {
+        statusBar()->showMessage(talking ? "Opponent speaking..." : "");
+    });
+    //
+
     chatInputLayout->addWidget(chatInput);
     chatInputLayout->addWidget(sendBtn);
+    chatInputLayout->addWidget(pttButton);
 
     chatLayout->addWidget(chatDisplay);
     chatLayout->addLayout(chatInputLayout);
@@ -1649,6 +1794,8 @@ void MainWindow::onListenClicked()
             return;
         }
 
+
+
         networkManager->stopListening();
         connectionStatusLabel->setText("● Disconnected");
         connectionStatusLabel->setStyleSheet("color: red; font-weight: bold;");
@@ -1660,6 +1807,7 @@ void MainWindow::onListenClicked()
     }
 
     int port = portSpin->value();
+    PawnConstants::listeningPort = port;
     networkManager->startListening(port);
     PawnConstants::isServerListening = true;
     connectionStatusLabel->setText("● Waiting for peer...");
@@ -1673,7 +1821,90 @@ void MainWindow::onListenClicked()
     if (!externalIP.isEmpty()) {
         chatDisplay->append("[System] Your external IP: " + externalIP);
     }
+
+    QString lanIP = getLanIP();
+    if (!lanIP.isEmpty()) {
+        chatDisplay->append("[System] Your LAN IP: " + externalIP);
+    }
 }
+
+/*
+void MainWindow::onConnect()
+{
+    if (networkManager && networkManager->isConnected()) {
+        QMessageBox::StandardButton reply = QMessageBox::question(
+                    this,
+                    "Disconnect",
+                    "Are you sure you want to disconnect from peer?",
+                    QMessageBox::Yes | QMessageBox::No
+                    );
+
+        if (reply == QMessageBox::No) {
+            return;
+        }
+
+        QJsonObject msg;
+        msg["type"] = "peer_disconnect";
+        networkManager->sendMessage(msg);
+
+        networkManager->disconnectFromPeer();
+        networkManager->stopListening();
+
+        // ============ CLEAN UP VOICE ============
+        if (m_voice) {
+            m_voice->stopSession();
+            //m_voice->resetState();
+
+        }
+
+        connectionStatusLabel->setText("● Disconnected");
+        connectionStatusLabel->setStyleSheet("color: red; font-weight: bold;");
+        chatInput->setEnabled(false);
+        startGameBtn->setEnabled(false);
+        listenBtn->setEnabled(true);
+        connectBtn->setText("Connect");
+        chatDisplay->append("[System] Disconnected from peer.");
+
+        return;
+    }
+
+    if (alreadyonceaudioconnected) {
+        QMessageBox::StandardButton reply = QMessageBox::question(
+            this,
+            "Audio Already Connected",
+            "Audio connection is still active.\n\n"
+            "To properly reset all sockets and audio state,\n"
+            "please restart the application.\n\n"
+            "Restart now?",
+            QMessageBox::Yes | QMessageBox::No
+        );
+
+        if (reply == QMessageBox::Yes) {
+            qApp->quit();
+            QProcess::startDetached(qApp->applicationFilePath(), QStringList());
+        }
+        return;
+    }
+
+
+    if (!networkManager) {
+        networkManager = new NetworkManager(this);
+        chatManager = new ChatManager(networkManager, this);
+    }
+
+
+    QString ipAddr = ipEdit->text().trimmed();
+    int port = portSpin->value();
+    networkManager->connectToPeer(ipAddr, port);
+
+    connectionStatusLabel->setText("● Connecting...");
+    connectionStatusLabel->setStyleSheet("color: orange; font-weight: bold;");
+    listenBtn->setEnabled(false);
+    chatDisplay->append("[System] Connecting to " + ipAddr + ":" + QString::number(port));
+    //connectBtn->setText("Disconnect");
+}
+*/
+
 
 void MainWindow::onConnect()
 {
@@ -1696,21 +1927,49 @@ void MainWindow::onConnect()
         networkManager->disconnectFromPeer();
         networkManager->stopListening();
 
-        connectionStatusLabel->setText("● Disconnected");
-        connectionStatusLabel->setStyleSheet("color: red; font-weight: bold;");
+        // ============ CLEAN UP VOICE ============
+        if (m_voice) {
+            m_voice->stopSession();
+        }
+
+        // ✅ Reset audio button
+        initializeAudioBtn->setStyleSheet("");
+        initializeAudioBtn->setToolTip("Request audio connection");
+
         chatInput->setEnabled(false);
         startGameBtn->setEnabled(false);
         listenBtn->setEnabled(true);
-        connectBtn->setText("Connect to peer");
+        connectBtn->setText("Connect");
         chatDisplay->append("[System] Disconnected from peer.");
+
+        // ✅ Call updateConnectionStatus
+        updateConnectionStatus();
+
         return;
     }
+
+    if (alreadyonceconnected) {
+           QMessageBox::StandardButton reply = QMessageBox::question(
+               this,
+               "Already Connected",
+               "Connection is still active.\n\n"
+               "To properly reset all sockets and audio state,\n"
+               "please restart the application.\n\n"
+               "Restart now?",
+               QMessageBox::Yes | QMessageBox::No
+           );
+
+           if (reply == QMessageBox::Yes) {
+               qApp->quit();
+               QProcess::startDetached(qApp->applicationFilePath(), QStringList());
+           }
+           return;
+       }
 
     if (!networkManager) {
         networkManager = new NetworkManager(this);
         chatManager = new ChatManager(networkManager, this);
     }
-
 
     QString ipAddr = ipEdit->text().trimmed();
     int port = portSpin->value();
@@ -1720,9 +1979,8 @@ void MainWindow::onConnect()
     connectionStatusLabel->setStyleSheet("color: orange; font-weight: bold;");
     listenBtn->setEnabled(false);
     chatDisplay->append("[System] Connecting to " + ipAddr + ":" + QString::number(port));
-    //connectBtn->setText("Disconnect");
+    alreadyonceconnected = true;
 }
-
 
 
 void MainWindow::onStartRemoteGame()
@@ -1768,6 +2026,9 @@ void MainWindow::onStartRemoteGame()
     chatDisplay->append("[System] Game request sent. You are White.");
 
     updateButtons(true);
+
+
+
 
     gameStatus->setText("Your turn (White) - make a move");
 }
@@ -1863,6 +2124,14 @@ void MainWindow::onSendChatMessage()
 
 void MainWindow::onConnectionRequestReceived(const QString& sender)
 {
+
+    return;
+    if (networkManager && networkManager->isConnected()) {
+        chatManager->sendConnectionResponse(true);
+        chatDisplay->append("[System] Auto-accepted connection from " + sender);
+        return;
+    }
+
     QMessageBox::StandardButton reply = QMessageBox::question(
                 this,
                 "Connection Request",
@@ -1872,6 +2141,7 @@ void MainWindow::onConnectionRequestReceived(const QString& sender)
 
     if (reply == QMessageBox::Yes) {
         chatManager->sendConnectionResponse(true);
+
     } else {
         chatManager->sendConnectionResponse(false);
     }
@@ -1879,11 +2149,14 @@ void MainWindow::onConnectionRequestReceived(const QString& sender)
 
 void MainWindow::onConnectionAccepted()
 {
+    return;
     chatDisplay->append("[System] Connected to peer.");
+
 }
 
 void MainWindow::onConnectionRejected()
 {
+    return;
     connectionStatusLabel->setText("● Disconnected");
     connectionStatusLabel->setStyleSheet("color: red; font-weight: bold;");
     chatInput->setEnabled(false);
@@ -1891,6 +2164,7 @@ void MainWindow::onConnectionRejected()
     chatDisplay->append("[System] Connection rejected.");
     listenBtn->setEnabled(true);
     connectBtn->setText("Connect to peer");
+    ;
 }
 
 void MainWindow::onGameRequestReceived(const QString& sender)
@@ -2050,7 +2324,12 @@ void MainWindow::setupNetworkConnections()
     connect(chatManager, &ChatManager::clockSettingsReceived,
             this, &MainWindow::onClockSettingsReceived);
 
-
+    connect(chatManager, &ChatManager::audioRequestReceived,
+            this, &MainWindow::onAudioRequestReceived);
+    connect(chatManager, &ChatManager::audioAccepted,
+            this, &MainWindow::onAudioAccepted);
+    connect(chatManager, &ChatManager::audioRejected,
+            this, &MainWindow::onAudioRejected);
 
     if (!networkManager || !chatManager) return;
 
@@ -2098,6 +2377,8 @@ void MainWindow::onContactSelected(QListWidgetItem* item)
         if (addressParts.size() >= 2) {
             ipEdit->setText(addressParts[0]);           // IP
             portSpin->setValue(addressParts[1].toInt()); // Port
+            contactNameLabel->setText(currentContactName.trimmed());
+            updateConnectionStatus();
         }
     }
 
@@ -2162,13 +2443,15 @@ void MainWindow::refreshContactList()
 
 void MainWindow::onConnectedToPeer()
 {
-
+    playSound(SOUNDTYPE::CHAT_RECEIVED);
     connectionStatusLabel->setText("● Connected");
     connectionStatusLabel->setStyleSheet("color: green; font-weight: bold;");
     chatInput->setEnabled(true);
     startGameBtn->setEnabled(true);
     chatDisplay->append("[System] Connected to peer.");
     connectBtn->setText("Disconnect");
+    updateConnectionStatus();
+    alreadyonceconnected = true;
 }
 
 void MainWindow::stopGameLocally(const QString& reason)
@@ -2204,6 +2487,11 @@ void MainWindow::onGameStoppedByPeer()
 
 void MainWindow::onPeerDisconnected()
 {
+    // Clean up voice
+    if (m_voice) {
+        m_voice->stopSession();
+       // m_voice->resetState();
+    }
     connectionStatusLabel->setText("● Disconnected");
     connectionStatusLabel->setStyleSheet("color: red; font-weight: bold;");
     chatInput->setEnabled(false);
@@ -2216,6 +2504,26 @@ void MainWindow::onPeerDisconnected()
     }
 
     chatDisplay->append("[System] Remote peer disconnected.");
+    QTimer::singleShot(1000, this, [this]() {
+        updateConnectionStatus();
+    });
+    if (alreadyonceconnected) {
+           QMessageBox::StandardButton reply = QMessageBox::question(
+               this,
+               "Peer Disconnected",
+               "Connection is still active.\n\n"
+               "To properly reset all sockets and audio state,\n"
+               "please restart the application.\n\n"
+               "Restart now?",
+               QMessageBox::Yes | QMessageBox::No
+           );
+
+           if (reply == QMessageBox::Yes) {
+               qApp->quit();
+               QProcess::startDetached(qApp->applicationFilePath(), QStringList());
+           }
+           return;
+       }
 }
 
 void MainWindow::onPieceSetChanged(const QString &setName)
@@ -3035,6 +3343,7 @@ QStringList MainWindow::getMoveHistoryFromTable()
     return moves;
 }
 
+/*
 void MainWindow::playSound(SOUNDTYPE type)
 {
     if(!playSounds) return;
@@ -3081,6 +3390,53 @@ void MainWindow::playSound(SOUNDTYPE type)
     }
 
     m_soundPlayer->setSource(QUrl("qrc:/sound/" + soundFile));
+    m_soundPlayer->play();
+}
+*/
+
+void MainWindow::playSound(SOUNDTYPE type)
+{
+    if (!playSounds || !m_soundPlayer) return;
+
+    switch (type) {
+    case SOUND_MOVE:
+        m_soundPlayer->setSource(QUrl("qrc:/sound/move_009.wav"));
+        break;
+    case SOUND_CHECK:
+        m_soundPlayer->setSource(QUrl("qrc:/sound/check.wav"));
+        break;
+    case SOUND_CHECKMATE:
+        m_soundPlayer->setSource(QUrl("qrc:/sound/gameover.wav"));
+        break;
+    case SOUND_CAPTURE:
+        m_soundPlayer->setSource(QUrl("qrc:/sound/capture.wav"));
+        break;
+    case SOUND_PROMOTION:
+        m_soundPlayer->setSource(QUrl("qrc:/sound/specialmove.wav"));
+        break;
+    case SOUND_CASTLING:
+        m_soundPlayer->setSource(QUrl("qrc:/sound/specialmove.wav"));
+        break;
+    case SOUND_ENPASSANT:
+        m_soundPlayer->setSource(QUrl("qrc:/sound/specialmove.wav"));
+        break;
+    case SOUND_GAME_OVER:
+        m_soundPlayer->setSource(QUrl("qrc:/sound/gameover.wav"));
+        break;
+    case SOUND_START:
+        m_soundPlayer->setSource(QUrl("qrc:/sound/start.wav"));
+        break;
+    case CHAT_SEND:
+        m_soundPlayer->setSource(QUrl("qrc:/sound/chatsent.wav"));
+        break;
+    case CHAT_RECEIVED:
+        m_soundPlayer->setSource(QUrl("qrc:/sound/chatreceived.wav"));
+        break;
+    default:
+        m_soundPlayer->setSource(QUrl("qrc:/sound/move_009.wav"));
+        break;
+    }
+
     m_soundPlayer->play();
 }
 
@@ -3275,4 +3631,241 @@ void MainWindow::onClockSettingsReceived(bool enabled, int minutes, int incremen
         resetClocks();
         chatDisplay->append("[System] Clocks disabled by opponent.");
     }
+}
+
+/*
+void MainWindow::onAudioRequestReceived(const QString& sender)
+{
+    QMessageBox::StandardButton reply = QMessageBox::question(
+        this,
+        "Audio Request",
+        sender + " wants to start audio. Accept?",
+        QMessageBox::Yes | QMessageBox::No
+    );
+
+    if (reply == QMessageBox::Yes) {
+        chatManager->sendAudioResponse(true);
+
+        if (m_voice) {
+            QString peerIP = ipEdit->text().trimmed();
+            quint16 audioPort = portSpin->value();
+            m_voice->startSession(peerIP, audioPort, true);  // SERVER
+        }
+    } else {
+        chatManager->sendAudioResponse(false);
+    }
+}
+*/
+
+void MainWindow::onAudioRequestReceived(const QString& sender)
+{
+    QMessageBox::StandardButton reply = QMessageBox::question(
+        this,
+        "Audio Request",
+        sender + " wants to start audio. Accept?",
+        QMessageBox::Yes | QMessageBox::No
+    );
+
+    if (reply == QMessageBox::Yes) {
+        playSound(SOUNDTYPE::CHAT_RECEIVED);
+        chatManager->sendAudioResponse(true);
+
+        if (m_voice) {
+            // ============ USE NETWORKMANAGER ============
+            QString peerIP = networkManager->getPeerAddress();
+            quint16 audioPort = PawnConstants::listeningPort;
+            m_voice->startSession(peerIP, audioPort, true);  // SERVER
+            QTimer::singleShot(1000, this, [this]() {
+                        updateConnectionStatus();
+                    });
+        }
+    } else {
+        chatManager->sendAudioResponse(false);
+    }
+}
+
+/*
+void MainWindow::onAudioAccepted()
+{
+    QMessageBox::information(this, "Accepted", "Peer accepted audio request!");
+
+    if (m_voice) {
+        QString peerIP = ipEdit->text().trimmed();
+        quint16 audioPort = portSpin->value();
+        m_voice->startSession(peerIP, audioPort, false);  // CLIENT
+    }
+}
+*/
+
+void MainWindow::onAudioAccepted()
+{
+    playSound(SOUNDTYPE::CHAT_RECEIVED);
+    QMessageBox::information(this, "Accepted", "Peer accepted audio request!");
+
+    if (m_voice) {
+        // ============ USE NETWORKMANAGER ============
+        QString peerIP = networkManager->getPeerAddress();
+        quint16 audioPort = PawnConstants::listeningPort;
+        m_voice->startSession(peerIP, audioPort, false);  // CLIENT
+        QTimer::singleShot(1000, this, [this]() {
+                    updateConnectionStatus();
+                });
+    }
+}
+
+void MainWindow::onAudioRejected()
+{
+    QMessageBox::warning(this, "Rejected", "Peer declined audio request.");
+    updateConnectionStatus();
+}
+
+void MainWindow::onFindPeersClicked()
+{
+    statusBar()->showMessage("Searching for peers...");
+    discoveryManager->discoverPeers();
+    pingAllContacts();
+}
+
+void MainWindow::onPeerDiscovered(const PeerInfo& peer)
+{
+    // Check if already in contacts
+    QSettings settings;
+    settings.beginGroup("contacts");
+    QStringList names = settings.childKeys();
+
+    for (const QString& name : names) {
+        QString value = settings.value(name).toString();
+        if (value.startsWith(peer.ip + ":")) {
+            settings.endGroup();
+            return;  // Already exists
+        }
+    }
+    settings.endGroup();
+
+    // Add new contact
+    Contact contact;
+    contact.name = peer.name;
+    contact.address = peer.ip;
+    contact.port = peer.port;
+
+    addContact(contact);
+    refreshContactList();
+
+    statusBar()->showMessage("Found peer: " + peer.name + " (" + peer.ip + ")", 3000);
+
+}
+
+void MainWindow::updateConnectionStatus()
+{
+    bool isConnected = networkManager && networkManager->isConnected();
+    bool isCurrentContact = false;
+
+    if (isConnected && !currentContactName.isEmpty()) {
+        QString connectedIp = networkManager->getPeerAddress();
+        QString contactIp = getContactAddress(currentContactName);
+        isCurrentContact = (connectedIp == contactIp);
+    }
+
+    // Connection label
+    if (isConnected && isCurrentContact) {
+        connectionStatusLabel->setText("● Connected");
+        connectionStatusLabel->setStyleSheet("color: green; font-weight: bold;");
+    } else {
+        connectionStatusLabel->setText("● Disconnected");
+        connectionStatusLabel->setStyleSheet("color: red; font-weight: bold;");
+    }
+
+    // Audio button
+    bool audioConnected = m_voice && m_voice->isConnected();
+    if (audioConnected && isCurrentContact) {
+        initializeAudioBtn->setStyleSheet("background-color: #22c55e; color: white;");
+        initializeAudioBtn->setToolTip("Audio connected");
+    } else {
+        initializeAudioBtn->setStyleSheet("");
+        initializeAudioBtn->setToolTip("Request audio connection");
+    }
+
+    // Contact name
+    if (!currentContactName.isEmpty()) {
+        contactNameLabel->setText(currentContactName);
+    }
+
+}
+
+QString MainWindow::getContactAddress(const QString& name)
+{
+    QSettings settings;
+    settings.beginGroup("contacts");
+    QString value = settings.value(name).toString();
+    settings.endGroup();
+    return value.split(":").first();
+}
+
+
+QString MainWindow::getLanIP()
+{
+    for (const QHostAddress& addr : QNetworkInterface::allAddresses()) {
+        if (addr.protocol() == QAbstractSocket::IPv4Protocol &&
+            addr != QHostAddress::LocalHost &&
+            addr != QHostAddress::LocalHostIPv6) {
+            return addr.toString();
+        }
+    }
+    return QString();
+}
+
+void MainWindow::pingAllContacts()
+{
+    // ✅ Use OS ping via QProcess
+    QSettings settings;
+    settings.beginGroup("contacts");
+    QStringList names = settings.childKeys();
+
+    for (const QString& name : names) {
+        QString value = settings.value(name).toString();
+        QStringList parts = value.split(":");
+        if (parts.size() >= 2) {
+            QString ip = parts[0];
+
+            QProcess* process = new QProcess(this);
+            QStringList args;
+
+#ifdef Q_OS_WIN
+            args << "-n" << "1" << "-w" << "1000" << ip;
+#else
+            args << "-c" << "1" << "-W" << "1" << ip;
+#endif
+
+            connect(process, &QProcess::finished, this, [this, process, ip]() {
+                if (process->exitCode() == 0) {
+                    // ✅ Online - update DiscoveryManager
+                    if (discoveryManager) {
+                        QList<PeerInfo> peers = discoveryManager->getPeers();
+                        chatDisplay->append("[System]  --- Online Peers ---");
+                        for (PeerInfo& peer : peers) {
+                            if (peer.ip == ip) {
+                                peer.isOnline = true;
+                                peer.lastSeen = QDateTime::currentDateTime();
+                               // chatDisplay->append(QString("[System] Online:%1 (%2)").arg(peer.name).arg(peer.ip));
+                                chatDisplay->append(peer.name);
+
+                                break;
+                            }
+                        }
+                        chatDisplay->append("[System]  -------------------------");
+                        chatDisplay->append("[System] Online status of peers can only be fully ascertained through attempted connection");
+                    }
+                }
+                process->deleteLater();
+                refreshContactList();
+            });
+
+            connect(process, &QProcess::errorOccurred, this, [process]() {
+                process->deleteLater();
+            });
+
+            process->start("ping", args);
+        }
+    }
+    settings.endGroup();
 }

@@ -285,7 +285,6 @@ bool ChessBoard::makeMove(const QString& from, const QString& to) {
 void ChessBoard::applyEngineMove(const QString& move) {
 
     if (move.length() < 4) {
-        qWarning() << "❌ Invalid move:" << move;
         return;
     }
 
@@ -399,7 +398,6 @@ void ChessBoard::applyEngineMove(const QString& move) {
 
 bool ChessBoard::applyEngineMove(const QString& move) {
     if (move.length() < 4) {
-        qWarning() << "❌ Invalid move:" << move;
         return false;
     }
 
@@ -419,7 +417,6 @@ bool ChessBoard::applyEngineMove(const QString& move) {
 
     // ===== CHECK IF PIECE EXISTS =====
     if (!movingPiece) {
-        qWarning() << "❌ No piece at from square:" << from;
         return false;
     }
 

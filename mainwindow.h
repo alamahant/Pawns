@@ -25,10 +25,13 @@
 #include"upnpmanagerdialog.h"
 #include<QTableWidget>
 #include<QProgressBar>
-#include <QMediaPlayer>
-#include <QAudioOutput>
+//#include <QMediaPlayer>
+//#include <QAudioOutput>
+#include<QSoundEffect>
 #include"replaydialog.h"
 #include"sounds.h"
+#include"voicemanager.h"
+#include"discoverymanager.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -248,8 +251,8 @@ public slots:
 
     // sound player
 private:
-    QMediaPlayer* m_soundPlayer = nullptr;
-    QAudioOutput* m_audioOutput = nullptr;
+    QSoundEffect* m_soundPlayer = nullptr;
+    //QAudioOutput* m_audioOutput = nullptr;
 
 
     QAction* playSoundAction;
@@ -274,5 +277,24 @@ private:
     void updateButtons(bool gameIsRunning);
     QAction* highlightMoveAction;
     bool shouldHighlightMoves = true;
+private:
+    VoiceManager* m_voice;
+    QPushButton* pttButton;
+    QAction* enableAudioChatAction;
+    QPushButton* initializeAudioBtn;
+    DiscoveryManager* discoveryManager = nullptr;
+    void updateConnectionStatus();
+    QString getContactAddress(const QString& name);
+    bool alreadyonceconnected = false;
+    QString getLanIP();
+    void pingAllContacts();
+
+private slots:
+    void onAudioRequestReceived(const QString& sender);
+    void onAudioAccepted();
+    void onAudioRejected();
+    void onFindPeersClicked();
+    void onPeerDiscovered(const PeerInfo& peer);
+
 };
 #endif // MAINWINDOW_H

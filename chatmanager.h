@@ -68,6 +68,19 @@ public slots:
     void onError(const QString& errorMessage);
     void onConnectionRequestReceived(const QString& peerAddress);
     void handleClockSettings(const QJsonObject& message);
+
+public:
+    void sendAudioRequest();
+    void sendAudioResponse(bool accept);
+
+signals:
+    void audioRequestReceived(const QString& sender);
+    void audioAccepted();
+    void audioRejected();
+
+private slots:
+    void handleAudioRequest(const QJsonObject& msg);
+    void handleAudioResponse(const QJsonObject& msg);
 };
 
 #endif // CHATMANAGER_H

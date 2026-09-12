@@ -14,12 +14,7 @@
         <file>piecesets/default/wr.png</file>
         <file>icons/flag.svg</file>
         <file>icons/twitter.svg</file>
-        <file>sound/move_009.wav</file>
-        <file>sound/gameover.mp3</file>
-        <file>sound/specialmove.mp3</file>
         <file>icons/alert-triangle.svg</file>
-        <file>sound/chatreceived.mp3</file>
-        <file>sound/chatsent.mp3</file>
         <file>favicon/android-chrome-512x512.png</file>
         <file>icons/fast-forward.svg</file>
         <file>icons/folder.svg</file>
@@ -34,5 +29,14 @@
         <file>icons/x.svg</file>
         <file>icons/refresh-cw.svg</file>
         <file>io.github.alamahant.Pawns.png</file>
+        <file>icons/phone-call.svg</file>
+        <file>icons/phone-forwarded.svg</file>
+        <file>icons/globe.svg</file>
+        <file>sound/chatreceived.wav</file>
+        <file>sound/chatsent.wav</file>
+        <file>sound/gameover.wav</file>
+        <file>sound/move_009.wav</file>
+        <file>sound/special.wav</file>
+        <file>sound/specialmove.wav</file>
     </qresource>
 </RCC>

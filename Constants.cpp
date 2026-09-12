@@ -48,5 +48,7 @@ namespace PawnConstants {
     const QString saveHistoryDirPath = APPDIR + "/saved_histories";
     const QString savePGNDirPath = APPDIR + "/saved_PGN";
     bool isServerListening = false;
+    quint16 listeningPort = 12345;
+    bool isAudioChatEnabled = true;
 
 }
