@@ -135,7 +135,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         replaydialog.h replaydiaolog.cpp
         sounds.h
         donationdialog.cpp donationdialog.h helpmenudialog.cpp helpmenudialog.h
-        chessengine.h
         voicemanager.cpp voicemanager.h voiceprobe.h
         discoverymanager.cpp discoverymanager.h
 
