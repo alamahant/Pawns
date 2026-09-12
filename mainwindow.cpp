@@ -2186,6 +2186,7 @@ void MainWindow::onGameRequestReceived(const QString& sender)
         return;
     }
 
+    playSound(SOUNDTYPE::CHAT_RECEIVED);
     setupChessBoard();
     PawnConstants::isRemotePlay = true;
     PawnConstants::iAMWhite = false;
@@ -2211,6 +2212,7 @@ void MainWindow::onGameRequestReceived(const QString& sender)
 
 void MainWindow::onGameAccepted()
 {
+    playSound(SOUNDTYPE::CHAT_RECEIVED);
     chatDisplay->append("[System] Opponent accepted! You are White.");
     gameStatus->setText("Your turn (White) - make a move");
 }
